@@ -4,6 +4,12 @@ import { getAccessToken } from '../utils/dropbox';
 
 const IMPERSONATED_USER_ID = process.env.DROPBOX_IMPERSONATED_USER_ID || 'dbmid:AADzg3NNU51AvVr__L1my2NKbwuhAYH7QOc';
 
+// Define interfaces for Dropbox API responses
+interface TeamFolder { name: string; status: { '.tag': string }; team_folder_id: string; }
+interface TeamFoldersResponse { team_folders: TeamFolder[]; }
+interface ListFolderEntry { [key: string]: any; } // You can refine this further
+interface ListFolderResponse { entries: ListFolderEntry[]; }
+
 async function fetchWithTimeout(url: string, options: RequestInit, timeout = 30000) {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
@@ -46,14 +52,14 @@ export async function GET(request: NextRequest) {
         const errorText = await teamFoldersResponse.text();
         return NextResponse.json({ error: `Failed to list team folders: ${errorText}` }, { status: teamFoldersResponse.status });
       }
-      const teamFoldersData: unknown = await teamFoldersResponse.json();
+      const teamFoldersData: TeamFoldersResponse = await teamFoldersResponse.json();
       
       const allowedFolders = ['1 - Customers', '2 - Sales', '3 - Marketing', '4 - Product Assets'];
-      const filteredFolders = (teamFoldersData as any).team_folders.filter((folder: any) =>
+      const filteredFolders = teamFoldersData.team_folders.filter((folder: TeamFolder) =>
         allowedFolders.includes(folder.name) && folder.status['.tag'] === 'active'
       );
       
-      const entries = filteredFolders.map((folder: any) => ({
+      const entries = filteredFolders.map((folder: TeamFolder) => ({
         '.tag': 'folder',
         id: folder.team_folder_id,
         name: folder.name,
@@ -83,17 +89,17 @@ export async function GET(request: NextRequest) {
         const errorMessage = errorBody?.error_summary || 'Failed to list folder contents';
         return NextResponse.json({ error: errorMessage }, { status: listFolderResponse.status });
     }
-    const listFolderData: unknown = await listFolderResponse.json();
+    const listFolderData: ListFolderResponse = await listFolderResponse.json();
 
-    const entriesWithNamespace = (listFolderData as any).entries.map((entry: any) => ({
+    const entriesWithNamespace = listFolderData.entries.map((entry: ListFolderEntry) => ({
       ...entry,
       namespaceId: namespaceId
     }));
 
     return NextResponse.json(entriesWithNamespace);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Handler Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'An error occurred' }, { status: 500 });
   }
 } 

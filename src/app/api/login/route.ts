@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     const user = await prisma.user.findUnique({ where: { username } });
 
     if (user && bcrypt.compareSync(password, user.password)) {
-      const { password: _, ...userWithoutPassword } = user;
+      const { password: _unused, ...userWithoutPassword } = user;
       return NextResponse.json(userWithoutPassword);
     } else {
       return NextResponse.json({ message: 'Invalid username or password' }, { status: 401 });
