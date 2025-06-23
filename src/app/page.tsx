@@ -622,9 +622,9 @@ export default function Home() {
   return (
     <>
       <Toaster position="top-right" richColors />
-      <main className="min-h-screen w-full bg-white dark:bg-black flex flex-col md:flex-row">
+      <main className="h-screen w-screen flex flex-row bg-gray-50 dark:bg-black text-black dark:text-white overflow-x-auto">
         {/* Sidebar/Tree Panel */}
-        <section className="w-full md:w-1/4 lg:w-1/5 border-r border-gray-200 dark:border-gray-800 flex-shrink-0 flex flex-col h-64 md:h-auto max-h-80 md:max-h-none overflow-y-auto">
+        <section className="min-w-[280px] max-w-xs w-full border-r border-gray-200 dark:border-gray-800 flex-shrink-0 flex flex-col h-full">
           <div className="flex flex-col h-full">
             <h2 className="text-lg font-semibold p-4 border-b">
               Assets
@@ -674,7 +674,7 @@ export default function Home() {
           </div>
         </section>
         {/* Main Content Panel */}
-        <section className="w-full md:w-2/4 lg:w-3/5 flex flex-col h-96 md:h-auto max-h-96 md:max-h-none overflow-y-auto">
+        <section className="min-w-[350px] w-full flex flex-col h-full">
           <header className="flex h-14 items-center gap-4 border-b bg-white dark:bg-gray-950 px-6 shrink-0">
             <h1 className="text-lg font-semibold">Asset Rating</h1>
             <div className="ml-auto flex items-center gap-4">
@@ -944,7 +944,7 @@ export default function Home() {
           </ResizablePanelGroup>
         </section>
         {/* Comments/Details Panel */}
-        <section className="w-full md:w-1/4 lg:w-1/5 border-l border-gray-200 dark:border-gray-800 flex-shrink-0 flex flex-col h-64 md:h-auto max-h-80 md:max-h-none overflow-y-auto">
+        <section className="min-w-[300px] max-w-sm w-full border-l border-gray-200 dark:border-gray-800 flex-shrink-0 flex flex-col h-full">
           {!selectedAsset ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-500">
               <MessageSquare className="w-16 h-16 opacity-30" />
