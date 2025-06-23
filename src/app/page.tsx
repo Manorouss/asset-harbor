@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef, MouseEvent, KeyboardEvent, FormEvent, useMemo } from 'react';
 import { 
   LogOut, Folder, File, ChevronRight, ChevronDown, LoaderCircle, MessageSquare, 
-  Image as ImageIcon, Video, FileQuestion, 
+  Image as ImageIcon, FileQuestion, 
   SendHorizontal, Pencil, Trash2
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -29,6 +29,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import Image from 'next/image';
 
 // Setup PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -166,7 +167,6 @@ export default function Home() {
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editingContent, setEditingContent] = useState('');
   const [contextMenu, setContextMenu] = useState<ContextMenuInfo | null>(null);
-  const [assetMetadata, setAssetMetadata] = useState<Record<string, any>>({});
   const [filteredList, setFilteredList] = useState<Asset[] | null>(null);
   const [isLoadingFilter, setIsLoadingFilter] = useState(false);
   const [filters, setFilters] = useState<Filters>({
@@ -175,6 +175,7 @@ export default function Home() {
     hasNegativeRating: false,
     hasComments: false,
   });
+  const [assetMetadata, setAssetMetadata] = useState<Record<string, unknown>>({});
 
   const isFilteredView = useMemo(() => filters.hasNegativeRating || filters.hasComments, [filters]);
 
@@ -385,8 +386,8 @@ export default function Home() {
       }
       const data = await response.json();
       setAssetPreview(data.link);
-    } catch (error: any) {
-      setAssetPreviewError(error.message);
+    } catch (error: unknown) {
+      setAssetPreviewError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setIsLoadingPreview(false);
     }
@@ -741,7 +742,7 @@ export default function Home() {
                   const isVideo = ['mp4', 'mov', 'avi', 'webm'].includes(fileType || '');
                   const isPdf = fileType === 'pdf';
                   
-                  if (isImage) return <img src={assetPreview} alt={selectedAsset!.name} className="max-w-full max-h-full object-contain"/>;
+                  if (isImage) return <Image src={assetPreview} alt={selectedAsset!.name} className="max-w-full max-h-full object-contain" width={600} height={800} />;
                   if (isVideo) return <video src={assetPreview} controls className="max-w-full max-h-full"/>;
                   if (isPdf) {
                     return (

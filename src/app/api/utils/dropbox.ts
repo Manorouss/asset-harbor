@@ -8,6 +8,9 @@ let cachedToken = {
   expiresAt: 0 as number,
 };
 
+// Define an interface for the expected token response, and use type assertions when accessing properties like access_token and expires_in.
+interface DropboxTokenResponse { access_token: string; expires_in: number; }
+
 export async function getAccessToken() {
   const now = Date.now();
   // If we have a token and it's not expiring in the next minute, reuse it
@@ -31,13 +34,17 @@ export async function getAccessToken() {
       throw new Error(`Failed to refresh token: ${response.status} ${errorBody}`);
     }
 
-    const data: any = await response.json();
-    const expiresIn = data.expires_in || 28800; 
-    cachedToken = {
-      token: data.access_token,
-      expiresAt: now + (expiresIn * 1000),
-    };
-    return cachedToken.token;
+    const data: unknown = await response.json();
+    if (typeof data === 'object' && data !== null && 'access_token' in data && 'expires_in' in data) {
+      const tokenData = data as DropboxTokenResponse;
+      const expiresIn = tokenData.expires_in || 28800;
+      cachedToken = {
+        token: tokenData.access_token,
+        expiresAt: now + (expiresIn * 1000),
+      };
+      return cachedToken.token;
+    }
+    throw new Error('Invalid response format');
   } catch (error) {
     console.error('Error refreshing Dropbox token:', error);
     cachedToken = { token: null, expiresAt: 0 }; // Reset cache on error

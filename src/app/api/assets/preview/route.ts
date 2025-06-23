@@ -39,8 +39,12 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: errorMessage }, { status: response.status });
         }
 
-        const data: any = await response.json();
-        return NextResponse.json({ link: data.link });
+        const data: unknown = await response.json();
+        if (typeof data === 'object' && data !== null && 'link' in data) {
+            return NextResponse.json({ link: data.link as string });
+        } else {
+            return NextResponse.json({ error: 'Unexpected data format' }, { status: 500 });
+        }
 
     } catch (error: any) {
         console.error('API Error in /api/assets/preview:', error);

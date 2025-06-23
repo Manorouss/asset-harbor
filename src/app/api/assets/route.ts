@@ -46,10 +46,10 @@ export async function GET(request: NextRequest) {
         const errorText = await teamFoldersResponse.text();
         return NextResponse.json({ error: `Failed to list team folders: ${errorText}` }, { status: teamFoldersResponse.status });
       }
-      const teamFoldersData: any = await teamFoldersResponse.json();
+      const teamFoldersData: unknown = await teamFoldersResponse.json();
       
       const allowedFolders = ['1 - Customers', '2 - Sales', '3 - Marketing', '4 - Product Assets'];
-      const filteredFolders = teamFoldersData.team_folders.filter((folder: any) =>
+      const filteredFolders = (teamFoldersData as any).team_folders.filter((folder: any) =>
         allowedFolders.includes(folder.name) && folder.status['.tag'] === 'active'
       );
       
@@ -83,9 +83,9 @@ export async function GET(request: NextRequest) {
         const errorMessage = errorBody?.error_summary || 'Failed to list folder contents';
         return NextResponse.json({ error: errorMessage }, { status: listFolderResponse.status });
     }
-    const listFolderData: any = await listFolderResponse.json();
+    const listFolderData: unknown = await listFolderResponse.json();
 
-    const entriesWithNamespace = listFolderData.entries.map((entry: any) => ({
+    const entriesWithNamespace = (listFolderData as any).entries.map((entry: any) => ({
       ...entry,
       namespaceId: namespaceId
     }));

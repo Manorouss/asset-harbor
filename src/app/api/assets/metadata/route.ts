@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       }),
     ]);
     
-    const metadata: { [key: string]: any } = {};
+    const metadata: { [key: string]: unknown } = {};
 
     assetIds.forEach(id => {
         metadata[id] = {
@@ -44,16 +44,28 @@ export async function POST(request: NextRequest) {
     });
 
     comments.forEach(comment => {
-        if(metadata[comment.assetId]){
+        if(typeof metadata[comment.assetId] === 'object' && metadata[comment.assetId] !== null && 'commentCount' in metadata[comment.assetId]) {
             metadata[comment.assetId].commentCount = comment._count.assetId;
         }
     });
 
     ratings.forEach(ratingGroup => {
-      if(metadata[ratingGroup.assetId]){
-        if(ratingGroup.rating === 1) metadata[ratingGroup.assetId].ratings.positive = ratingGroup._count.rating;
-        if(ratingGroup.rating === 0) metadata[ratingGroup.assetId].ratings.neutral = ratingGroup._count.rating;
-        if(ratingGroup.rating === -1) metadata[ratingGroup.assetId].ratings.negative = ratingGroup._count.rating;
+      if(typeof metadata[ratingGroup.assetId] === 'object' && metadata[ratingGroup.assetId] !== null && 'ratings' in metadata[ratingGroup.assetId]) {
+        if(ratingGroup.rating === 1) {
+          if(typeof metadata[ratingGroup.assetId].ratings === 'object' && metadata[ratingGroup.assetId].ratings !== null && 'positive' in metadata[ratingGroup.assetId].ratings) {
+            metadata[ratingGroup.assetId].ratings.positive = ratingGroup._count.rating;
+          }
+        }
+        if(ratingGroup.rating === 0) {
+          if(typeof metadata[ratingGroup.assetId].ratings === 'object' && metadata[ratingGroup.assetId].ratings !== null && 'neutral' in metadata[ratingGroup.assetId].ratings) {
+            metadata[ratingGroup.assetId].ratings.neutral = ratingGroup._count.rating;
+          }
+        }
+        if(ratingGroup.rating === -1) {
+          if(typeof metadata[ratingGroup.assetId].ratings === 'object' && metadata[ratingGroup.assetId].ratings !== null && 'negative' in metadata[ratingGroup.assetId].ratings) {
+            metadata[ratingGroup.assetId].ratings.negative = ratingGroup._count.rating;
+          }
+        }
       }
     });
 

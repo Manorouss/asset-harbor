@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Could not obtain access token.' }, { status: 500 });
     }
 
-    let assetIds = new Set<string>();
+    const assetIds = new Set<string>();
 
     if (hasNegativeRating) {
       const negativeAnnotations = await prisma.annotation.findMany({
