@@ -15,10 +15,14 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeout = 300
     const id = setTimeout(() => controller.abort(), timeout);
 
     try {
-        const response = await fetch(url, {
-            ...options,
+        // Only include 'body' if it is not null or undefined
+        const { body, ...rest } = options;
+        const fetchOptions = {
+            ...rest,
+            ...(body !== undefined && body !== null ? { body: body as any } : {}),
             signal: controller.signal as any
-        });
+        };
+        const response = await fetch(url, fetchOptions as any);
         clearTimeout(id);
         return response;
     } catch (error) {
