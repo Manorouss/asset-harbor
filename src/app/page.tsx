@@ -175,7 +175,6 @@ export default function Home() {
     hasNegativeRating: false,
     hasComments: false,
   });
-  const [assetMetadata, setAssetMetadata] = useState<Record<string, unknown>>({});
 
   const isFilteredView = useMemo(() => filters.hasNegativeRating || filters.hasComments, [filters]);
 
@@ -234,7 +233,7 @@ export default function Home() {
             });
             if (!response.ok) throw new Error('Failed to fetch metadata');
             const data = await response.json();
-            setAssetMetadata(data);
+            // setAssetMetadata(data);
         } catch (error) {
             console.error(error);
             toast.error("Could not load asset metadata for filtering.");

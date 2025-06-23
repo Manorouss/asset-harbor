@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Unexpected data format' }, { status: 500 });
         }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('API Error in /api/assets/preview:', error);
         return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
     }
