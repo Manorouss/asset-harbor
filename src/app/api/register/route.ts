@@ -27,7 +27,7 @@ export async function POST(request: Request) {
             },
         });
 
-        const { password: _unused, ...userWithoutPassword } = user;
+        const { password: _, ...userWithoutPassword } = user;
         return NextResponse.json(userWithoutPassword, { status: 201 });
 
     } catch (error) {

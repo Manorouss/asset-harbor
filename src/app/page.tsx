@@ -241,8 +241,8 @@ export default function Home() {
 
   const finalFilteredList = useMemo(() => {
     if (!filteredList) return null;
-    return filteredList.filter(asset => asset.name.toLowerCase().includes(filters.name.toLowerCase()));
-  }, [filteredList, filters.name]);
+    return filteredList.filter(_asset => _asset.name.toLowerCase().includes(filters.name.toLowerCase()));
+  }, [filteredList, filters.name, filters]);
 
   const filteredTree = useMemo(() => {
     const filterNodes = (nodes: Asset[]): Asset[] => {
@@ -252,9 +252,9 @@ export default function Home() {
         return nodes;
       }
 
-      const checkType = (node: Asset) => {
+      const checkType = (_asset: Asset) => {
         if (filters.type === 'all') return true;
-        const extension = node.name.split('.').pop()?.toLowerCase();
+        const extension = _asset.name.split('.').pop()?.toLowerCase();
         if (!extension) return false;
 
         if (filters.type === 'image') return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension);

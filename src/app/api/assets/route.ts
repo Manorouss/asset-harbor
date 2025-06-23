@@ -7,7 +7,7 @@ const IMPERSONATED_USER_ID = process.env.DROPBOX_IMPERSONATED_USER_ID || 'dbmid:
 // Define interfaces for Dropbox API responses
 interface TeamFolder { name: string; status: { '.tag': string }; team_folder_id: string; }
 interface TeamFoldersResponse { team_folders: TeamFolder[]; }
-interface ListFolderEntry { [key: string]: any; } // You can refine this further
+interface ListFolderEntry { [key: string]: unknown; } // More precise than any
 interface ListFolderResponse { entries: ListFolderEntry[]; }
 
 async function fetchWithTimeout(url: string, options: RequestInit, timeout = 30000) {
@@ -19,9 +19,10 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeout = 300
         const { body, ...rest } = options;
         const fetchOptions = {
             ...rest,
-            ...(body !== undefined && body !== null ? { body: body as any } : {}),
-            signal: controller.signal as any
+            ...(body !== undefined && body !== null ? { body: body as BodyInit } : {}),
+            signal: controller.signal
         };
+        // node-fetch and browser fetch have slightly different types, so cast to any for compatibility
         const response = await fetch(url, fetchOptions as any);
         clearTimeout(id);
         return response;
@@ -29,8 +30,8 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeout = 300
         if (error instanceof AbortError) {
             throw new Error(`Request timed out after ${timeout / 1000} seconds`);
         }
-    throw error;
-  }
+        throw error;
+    }
 }
 
 export async function GET(request: NextRequest) {
