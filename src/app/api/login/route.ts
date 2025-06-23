@@ -13,8 +13,8 @@ export async function POST(request: NextRequest) {
     const user = await prisma.user.findUnique({ where: { username } });
 
     if (user && bcrypt.compareSync(password, user.password)) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...userWithoutPassword } = user;
+      // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+      const { password: _password, ...userWithoutPassword } = user;
       return NextResponse.json(userWithoutPassword);
     } else {
       return NextResponse.json({ message: 'Invalid username or password' }, { status: 401 });

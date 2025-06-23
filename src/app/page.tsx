@@ -106,8 +106,8 @@ const reactionEmojis = ['👍', '👎', '❤️', '😂'];
 const AssetTreeItem = ({ node, selectedAsset, onSelectAsset, onToggleFolder }: {
   node: Asset;
   selectedAsset: Asset | null;
-  onSelectAsset: (asset: Asset) => void;
-  onToggleFolder: (asset: Asset) => void;
+  onSelectAsset: (_asset: Asset) => void;
+  onToggleFolder: (_asset: Asset) => void;
 }) => {
   const isFolder = node['.tag'] === 'folder';
 
@@ -263,23 +263,23 @@ export default function Home() {
         return false;
       };
 
-      return nodes.map(node => {
-        const children = node.children ? filterNodes(node.children) : undefined;
+      return nodes.map(_asset => {
+        const children = _asset.children ? filterNodes(_asset.children) : undefined;
         
-        const nameMatch = node.name.toLowerCase().includes(filters.name.toLowerCase());
+        const nameMatch = _asset.name.toLowerCase().includes(filters.name.toLowerCase());
         
-        if (node['.tag'] === 'folder') {
+        if (_asset['.tag'] === 'folder') {
             if (children && children.length > 0) {
-                return { ...node, children, isOpen: true }; // Keep folder if children match
+                return { ..._asset, children, isOpen: true }; // Keep folder if children match
             }
             // Also keep folder if it matches the name search directly
-            return nameMatch ? { ...node, children } : null;
+            return nameMatch ? { ..._asset, children } : null;
         }
 
         // It's a file, check for match
-        const typeMatch = checkType(node);
+        const typeMatch = checkType(_asset);
         if (nameMatch && typeMatch) {
-          return node;
+          return _asset;
         }
 
         return null;
@@ -287,7 +287,7 @@ export default function Home() {
     };
 
     return filterNodes(tree);
-  }, [tree, filters.name, filters.type]);
+  }, [tree, filters]);
 
   const router = useRouter();
   const commentsEndRef = useRef<HTMLDivElement>(null);
@@ -683,14 +683,14 @@ export default function Home() {
                    </div>
                  ) : (
                    finalFilteredList && finalFilteredList.length > 0 ? (
-                     finalFilteredList.map(asset => (
+                     finalFilteredList.map(_asset => (
                        <div 
-                         key={asset.id}
-                         className={`flex items-center p-1 my-0.5 rounded-md cursor-pointer transition-colors ${selectedAsset?.id === asset.id ? 'bg-blue-100 dark:bg-blue-900/50' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-                         onClick={() => handleSelectAsset(asset)}
+                         key={_asset.id}
+                         className={`flex items-center p-1 my-0.5 rounded-md cursor-pointer transition-colors ${selectedAsset?.id === _asset.id ? 'bg-blue-100 dark:bg-blue-900/50' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                         onClick={() => handleSelectAsset(_asset)}
                        >
                          <File className="w-5 h-5 mr-2 text-gray-400" />
-                         <span className="truncate text-sm">{asset.name}</span>
+                         <span className="truncate text-sm">{_asset.name}</span>
                        </div>
                      ))
                    ) : (
