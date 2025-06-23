@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
+interface AssetMetadata {
+  commentCount?: number;
+  ratings: {
+    positive?: number;
+    neutral?: number;
+    negative?: number;
+  };
+  // Add other properties as needed
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { assetIds } = await request.json();
@@ -34,7 +44,7 @@ export async function POST(request: NextRequest) {
       }),
     ]);
     
-    const metadata: { [key: string]: unknown } = {};
+    const metadata: Record<string, AssetMetadata> = {};
 
     assetIds.forEach(id => {
         metadata[id] = {
@@ -44,28 +54,16 @@ export async function POST(request: NextRequest) {
     });
 
     comments.forEach(comment => {
-        if(typeof metadata[comment.assetId] === 'object' && metadata[comment.assetId] !== null && 'commentCount' in metadata[comment.assetId]) {
+        if (metadata[comment.assetId]) {
             metadata[comment.assetId].commentCount = comment._count.assetId;
         }
     });
 
     ratings.forEach(ratingGroup => {
-      if(typeof metadata[ratingGroup.assetId] === 'object' && metadata[ratingGroup.assetId] !== null && 'ratings' in metadata[ratingGroup.assetId]) {
-        if(ratingGroup.rating === 1) {
-          if(typeof metadata[ratingGroup.assetId].ratings === 'object' && metadata[ratingGroup.assetId].ratings !== null && 'positive' in metadata[ratingGroup.assetId].ratings) {
-            metadata[ratingGroup.assetId].ratings.positive = ratingGroup._count.rating;
-          }
-        }
-        if(ratingGroup.rating === 0) {
-          if(typeof metadata[ratingGroup.assetId].ratings === 'object' && metadata[ratingGroup.assetId].ratings !== null && 'neutral' in metadata[ratingGroup.assetId].ratings) {
-            metadata[ratingGroup.assetId].ratings.neutral = ratingGroup._count.rating;
-          }
-        }
-        if(ratingGroup.rating === -1) {
-          if(typeof metadata[ratingGroup.assetId].ratings === 'object' && metadata[ratingGroup.assetId].ratings !== null && 'negative' in metadata[ratingGroup.assetId].ratings) {
-            metadata[ratingGroup.assetId].ratings.negative = ratingGroup._count.rating;
-          }
-        }
+      if (metadata[ratingGroup.assetId]) {
+        if (ratingGroup.rating === 1) metadata[ratingGroup.assetId].ratings.positive = ratingGroup._count.rating;
+        if (ratingGroup.rating === 0) metadata[ratingGroup.assetId].ratings.neutral = ratingGroup._count.rating;
+        if (ratingGroup.rating === -1) metadata[ratingGroup.assetId].ratings.negative = ratingGroup._count.rating;
       }
     });
 
