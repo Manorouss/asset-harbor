@@ -242,7 +242,7 @@ export default function Home() {
   const finalFilteredList = useMemo(() => {
     if (!filteredList) return null;
     return filteredList.filter(_asset => _asset.name.toLowerCase().includes(filters.name.toLowerCase()));
-  }, [filteredList, filters.name, filters]);
+  }, [filteredList, filters]);
 
   const filteredTree = useMemo(() => {
     const filterNodes = (nodes: Asset[]): Asset[] => {

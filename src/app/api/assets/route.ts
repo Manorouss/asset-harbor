@@ -22,7 +22,7 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeout = 300
             ...(body !== undefined && body !== null ? { body: body as BodyInit } : {}),
             signal: controller.signal
         };
-        // node-fetch and browser fetch have slightly different types, so cast to any for compatibility
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const response = await fetch(url, fetchOptions as any);
         clearTimeout(id);
         return response;
