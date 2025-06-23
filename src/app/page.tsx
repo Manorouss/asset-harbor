@@ -232,8 +232,6 @@ export default function Home() {
                 body: JSON.stringify({ assetIds }),
             });
             if (!response.ok) throw new Error('Failed to fetch metadata');
-            const data = await response.json();
-            // setAssetMetadata(data);
         } catch (error) {
             console.error(error);
             toast.error("Could not load asset metadata for filtering.");

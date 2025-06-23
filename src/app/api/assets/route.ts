@@ -4,14 +4,14 @@ import { getAccessToken } from '../utils/dropbox';
 
 const IMPERSONATED_USER_ID = process.env.DROPBOX_IMPERSONATED_USER_ID || 'dbmid:AADzg3NNU51AvVr__L1my2NKbwuhAYH7QOc';
 
-async function fetchWithTimeout(url: string, options: any, timeout = 30000) {
+async function fetchWithTimeout(url: string, options: RequestInit, timeout = 30000) {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
 
     try {
         const response = await fetch(url, {
             ...options,
-            signal: controller.signal
+            signal: controller.signal as any
         });
         clearTimeout(id);
         return response;
