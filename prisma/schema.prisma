@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// User accounts for collaborative annotation. Each user can comment/rate any asset.
+model User {
+  id               Int          @id @default(autoincrement())
+  username         String       @unique // Used for login and display
+  password         String       // Store hashed password (never plain text)
+  annotations      Annotation[] // All annotations by this user
+  comments         Comment[]    // All comments by this user
+  commentReactions CommentReaction[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+/// Annotation for a Dropbox asset by a specific user.
+/// Each (user, asset) pair can have only one annotation (enforced by unique constraint).
+model Annotation {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  assetId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, assetId])
+}
+
+/// A single comment on an asset by a user.
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  assetId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reactions CommentReaction[]
+
+  @@index([assetId])
+}
+
+model CommentReaction {
+  id        Int      @id @default(autoincrement())
+  emoji     String
+  createdAt DateTime @default(now())
+
+  commentId Int
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  userId Int
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId, emoji])
+}
