@@ -10,7 +10,7 @@ async function main() {
     update: {},
     create: {
       username: 'Manouk',
-      passwordHash: '$2b$10$aw.ER7CJ5Qtkh77YCnBdIuvMDsyXMU53Qf7GIkozEyH6ZqW1AJFP2', // pass: 1011
+      password: '$2b$10$aw.ER7CJ5Qtkh77YCnBdIuvMDsyXMU53Qf7GIkozEyH6ZqW1AJFP2', // pass: 1011
     },
   });
   await prisma.user.upsert({
@@ -18,7 +18,7 @@ async function main() {
     update: {},
     create: {
       username: 'Chuck',
-      passwordHash: '$2b$10$L6COPnooKZtKQGzY6sNZH.kNmhRrgCVTDIvJweBTRiHO8ybYyQmAe', // pass: 1234
+      password: '$2b$10$L6COPnooKZtKQGzY6sNZH.kNmhRrgCVTDIvJweBTRiHO8ybYyQmAe', // pass: 1234
     },
   });
   await prisma.user.upsert({
@@ -26,7 +26,7 @@ async function main() {
     update: {},
     create: {
       username: 'Eric',
-      passwordHash: '$2b$10$VvhefE0xR5NeO7dqPrDkGO.g9sBXTcpSfwFIlS9G0pcci.kTsf442', // pass: 1234
+      password: '$2b$10$VvhefE0xR5NeO7dqPrDkGO.g9sBXTcpSfwFIlS9G0pcci.kTsf442', // pass: 1234
     },
   });
 }
