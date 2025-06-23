@@ -19,8 +19,8 @@ async function fetchWithTimeout(url: string, options: any, timeout = 30000) {
         if (error instanceof AbortError) {
             throw new Error(`Request timed out after ${timeout / 1000} seconds`);
         }
-        throw error;
-    }
+    throw error;
+  }
 }
 
 export async function GET(request: NextRequest) {
@@ -96,4 +96,4 @@ export async function GET(request: NextRequest) {
     console.error('Handler Error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+} 

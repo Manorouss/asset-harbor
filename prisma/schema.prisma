@@ -33,6 +33,7 @@ model Annotation {
   updatedAt DateTime @updatedAt
   userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hidden    Boolean  @default(false)
 
   @@unique([userId, assetId])
 }
