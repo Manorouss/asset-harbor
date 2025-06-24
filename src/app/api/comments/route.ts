@@ -5,13 +5,17 @@ import prisma from '../../../lib/prisma';
 // Returns all comments for a given assetId
 export async function GET(request: NextRequest) {
     const assetId = request.nextUrl.searchParams.get('assetId');
+    const username = request.nextUrl.searchParams.get('username');
     if (!assetId) {
         return NextResponse.json({ error: 'Missing assetId parameter' }, { status: 400 });
     }
 
     try {
         const comments = await prisma.comment.findMany({
-            where: { assetId },
+            where: {
+                assetId,
+                ...(username ? { user: { username } } : {})
+            },
             include: {
                 user: {
                     select: {
@@ -144,5 +148,26 @@ export async function PATCH(request: Request) {
     } catch (error) {
         console.error('Failed to update comment:', error);
         return NextResponse.json({ message: 'Failed to update comment' }, { status: 500 });
+    }
+}
+
+// DELETE /api/comments/purge
+// Body: { userId: number }
+// Deletes all comments if user is admin
+export async function PURGE(request: NextRequest) {
+    try {
+        const { userId } = await request.json();
+        if (!userId) {
+            return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
+        }
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        if (!user || !user.isAdmin) {
+            return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+        }
+        await prisma.comment.deleteMany({});
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error('Failed to purge comments:', error);
+        return NextResponse.json({ error: 'Failed to purge comments' }, { status: 500 });
     }
 } 

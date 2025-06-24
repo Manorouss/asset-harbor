@@ -37,4 +37,8 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
     return NextResponse.json({ id: user.id, username: user.username });
-} 
+}
+
+// GET /api/login/all
+// Returns: [{ id, username }, ...] for all users
+// (Moved to /api/login/all/route.ts for proper routing) 

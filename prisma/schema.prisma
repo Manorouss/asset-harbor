@@ -21,6 +21,7 @@ model User {
   commentReactions CommentReaction[]
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
+  isAdmin          Boolean      @default(false)
 }
 
 /// Annotation for a Dropbox asset by a specific user.

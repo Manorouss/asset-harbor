@@ -6,11 +6,17 @@ const IMPERSONATED_USER_ID = process.env.DROPBOX_IMPERSONATED_USER_ID || 'dbmid:
 
 export async function POST(request: NextRequest) {
   try {
-    const { hasNegativeRating, hasComments } = await request.json();
+    const { hasNegativeRating, hasComments, hasAnyRating } = await request.json();
     const accessToken = await getAccessToken();
 
     if (!accessToken) {
       return NextResponse.json({ error: 'Could not obtain access token.' }, { status: 500 });
+    }
+
+    // If no filters are set, return all assets (or a reasonable default set)
+    if (!hasNegativeRating && !hasComments && !hasAnyRating) {
+      // For simplicity, return an empty array or implement logic to fetch all assets if needed
+      return NextResponse.json([]);
     }
 
     const assetIds = new Set<string>();
@@ -21,6 +27,13 @@ export async function POST(request: NextRequest) {
         select: { assetId: true },
       });
       negativeAnnotations.forEach(a => assetIds.add(a.assetId));
+    }
+
+    if (hasAnyRating) {
+      const anyAnnotations = await prisma.annotation.findMany({
+        select: { assetId: true },
+      });
+      anyAnnotations.forEach(a => assetIds.add(a.assetId));
     }
 
     if (hasComments) {
