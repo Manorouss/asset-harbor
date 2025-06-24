@@ -31,10 +31,13 @@ async function main() {
   });
   await prisma.user.upsert({
     where: { username: 'admin' },
-    update: {},
+    update: {
+      password: '$2b$10$JEO0m2O4Vhr083uLLgJpJOflPo/XjCsdrL1xDcM5uM0f5zWMeZoLO', // pass: admin123
+      isAdmin: true,
+    },
     create: {
       username: 'admin',
-      password: '$2b$10$w8QwQwQwQwQwQwQwQwQwQeQwQwQwQwQwQwQwQwQwQwQwQwQwQw', // pass: admin123
+      password: '$2b$10$JEO0m2O4Vhr083uLLgJpJOflPo/XjCsdrL1xDcM5uM0f5zWMeZoLO', // pass: admin123
       isAdmin: true,
     },
   });

@@ -32,18 +32,21 @@ export async function POST(request: NextRequest) {
             body: JSON.stringify({ path }),
         });
 
-        if (!response.ok) {
-            const errorBody = await response.json();
-            console.error('Dropbox API Error:', errorBody);
-            const errorMessage = errorBody?.error_summary || 'Failed to get temporary link from Dropbox';
-            return NextResponse.json({ error: errorMessage }, { status: response.status });
+        // Log the Dropbox response for debugging
+        console.log('[DROPBOX PREVIEW DEBUG]', { path, namespaceId, status: response.status });
+        let data: unknown;
+        try {
+            data = await response.json();
+            console.log('[DROPBOX PREVIEW DATA]', data);
+        } catch (parseError) {
+            console.error('[DROPBOX PREVIEW PARSE ERROR]', parseError);
+            return NextResponse.json({ error: 'Failed to parse Dropbox response' }, { status: 500 });
         }
 
-        const data: unknown = await response.json();
-        if (typeof data === 'object' && data !== null && 'link' in data) {
-            return NextResponse.json({ link: data.link as string });
+        if (response.ok && typeof data === 'object' && data !== null && 'link' in data && typeof (data as { link?: unknown }).link === 'string') {
+            return NextResponse.json({ link: (data as { link: string }).link });
         } else {
-            return NextResponse.json({ error: 'Unexpected data format' }, { status: 500 });
+            return NextResponse.json({ error: 'Unexpected data format', data }, { status: 500 });
         }
 
     } catch (error: unknown) {

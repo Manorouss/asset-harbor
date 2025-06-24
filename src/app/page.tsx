@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef, MouseEvent, KeyboardEvent, Fo
 import { 
   LogOut, Folder, File, ChevronRight, ChevronDown, LoaderCircle, MessageSquare, 
   Image as ImageIcon, FileQuestion, 
-  SendHorizontal, Pencil, Trash2
+  SendHorizontal, Pencil, Trash2, Moon, Sun
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -30,6 +30,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Setup PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -104,13 +105,40 @@ const reactionEmojis = ['👍', '👎', '❤️', '😂'];
 
 
 // Helper Components
-const AssetTreeItem = ({ node, selectedAsset, onSelectAsset, onToggleFolder }: {
+const AssetTreeItem = ({ node, selectedAsset, onSelectAsset, onToggleFolder, annotations, commentedAssetIds }: {
   node: Asset;
   selectedAsset: Asset | null;
   onSelectAsset: (_asset: Asset) => void;
   onToggleFolder: (_asset: Asset) => void;
+  annotations: Annotation[];
+  commentedAssetIds: Set<string>;
 }) => {
   const isFolder = node['.tag'] === 'folder';
+
+  // Find the rating for this folder (if any)
+  let folderRating: number | undefined;
+  if (isFolder) {
+    const folderAnnotation = annotations.find(a => a.assetId === node.id);
+    folderRating = folderAnnotation?.rating;
+  }
+
+  // --- FILE ICON COLOR LOGIC ---
+  let fileIconColor = 'text-gray-400';
+  let fileTooltip = '';
+  if (!isFolder) {
+    const hasRating = annotations.some(a => a.assetId === node.id);
+    const hasComment = commentedAssetIds.has(node.id);
+    if (hasRating && hasComment) {
+      fileIconColor = 'text-purple-500';
+      fileTooltip = 'Rated & Commented';
+    } else if (hasRating) {
+      fileIconColor = 'text-blue-500';
+      fileTooltip = 'Rated';
+    } else if (hasComment) {
+      fileIconColor = 'text-green-500';
+      fileTooltip = 'Commented';
+    }
+  }
 
   const handleItemClick = () => {
     onSelectAsset(node);
@@ -119,38 +147,75 @@ const AssetTreeItem = ({ node, selectedAsset, onSelectAsset, onToggleFolder }: {
     }
   };
 
+  // Emoji logic
+  const ratingEmoji = folderRating === 1 ? '😊' : folderRating === 0 ? '😐' : folderRating === -1 ? '😞' : null;
+
   return (
     <div>
       <div 
         className={`flex items-center p-1 my-0.5 rounded-md cursor-pointer transition-colors ${selectedAsset?.id === node.id ? 'bg-blue-100 dark:bg-blue-900/50' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
         onClick={handleItemClick}
       >
-        <div className="w-6 text-gray-500 flex items-center justify-center">
+        <div className="w-6 text-gray-500 flex items-center justify-center relative">
           {isFolder && (
             node.isLoading ? <LoaderCircle className="w-4 h-4 animate-spin" /> :
             node.isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
           )}
         </div>
-        {isFolder ? <Folder className="w-5 h-5 mr-2 text-blue-500" /> : <File className="w-5 h-5 mr-2 text-gray-400" />}
-        <span className="truncate text-sm">{node.name}</span>
+        {isFolder ? (
+          <Folder className="w-5 h-5 mr-2 text-blue-500" />
+        ) : (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span><File className={`w-5 h-5 mr-2 ${fileIconColor}`} /></span>
+              </TooltipTrigger>
+              {fileTooltip && <TooltipContent>{fileTooltip}</TooltipContent>}
+            </Tooltip>
+          </TooltipProvider>
+        )}
+        <span className="truncate text-sm flex items-center gap-1">
+          {node.name}
+          {isFolder && ratingEmoji && (
+            <span className="ml-1 text-lg align-middle">{ratingEmoji}</span>
+          )}
+        </span>
       </div>
-      {node.isOpen && node.children && (
-        <div className="pl-5 border-l border-gray-200 dark:border-gray-700 ml-3">
-          {node.children.map(child => (
-            <AssetTreeItem 
-              key={child.id}
-              node={child} 
-              selectedAsset={selectedAsset}
-              onSelectAsset={onSelectAsset}
-              onToggleFolder={onToggleFolder}
-            />
-          ))}
-        </div>
+      {isFolder && (
+        <AnimatePresence initial={false}>
+          {node.isOpen && node.children && (
+            <motion.div
+              key="children"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="pl-5 border-l border-gray-200 dark:border-gray-700 ml-3 overflow-hidden"
+            >
+              {node.children.map(child => (
+                <AssetTreeItem
+                  key={child.id}
+                  node={child}
+                  selectedAsset={selectedAsset}
+                  onSelectAsset={onSelectAsset}
+                  onToggleFolder={onToggleFolder}
+                  annotations={annotations}
+                  commentedAssetIds={commentedAssetIds}
+                />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       )}
     </div>
   );
 };
 
+// Move sortAssets outside Home so it is stable for useCallback dependencies
+const sortAssets = (assets: Asset[]): Asset[] => {
+  return [...assets].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }))
+    .map(asset => asset.children ? { ...asset, children: sortAssets(asset.children) } : asset);
+};
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
@@ -179,6 +244,13 @@ export default function Home() {
   });
   const [userFilter, setUserFilter] = useState<string>('');
   const [userOptions, setUserOptions] = useState<string[]>([]);
+  const [commentedAssetIds, setCommentedAssetIds] = useState<Set<string>>(new Set());
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return false;
+  });
 
   const isFilteredView = useMemo(() => filters.hasNegativeRating || filters.hasComments, [filters]);
 
@@ -310,11 +382,10 @@ export default function Home() {
       const response = await fetch(`/api/assets?path=${encodeURIComponent(path)}&namespace_id=${namespaceId}`);
       if (!response.ok) throw new Error('Failed to fetch assets');
       const data: Asset[] = await response.json();
-      
       const updateTreeState = (nodes: Asset[], targetPath: string, children: Asset[]): Asset[] => {
         return nodes.map(node => {
           if (node.path_lower === targetPath) {
-            return { ...node, children, isOpen: true, isLoading: false };
+            return { ...node, children: sortAssets(children), isOpen: true, isLoading: false };
           }
           if (node.children) {
             return { ...node, children: updateTreeState(node.children, targetPath, children) };
@@ -322,7 +393,6 @@ export default function Home() {
           return node;
         });
       };
-      
       if (path) {
         setTree(prevTree => updateTreeState(prevTree, path, data));
       } else {
@@ -459,6 +529,28 @@ export default function Home() {
     }
   }, [selectedAsset, fetchComments, fetchAssetRatings, fetchPreview, userFilter]);
 
+  useEffect(() => {
+    // Fetch all commented asset IDs on mount
+    async function fetchCommentedAssetIds() {
+      try {
+        const response = await fetch('/api/comments/all');
+        if (!response.ok) throw new Error('Failed to fetch commented asset IDs');
+        const data = await response.json();
+        setCommentedAssetIds(new Set(data.map((c: { assetId: string }) => c.assetId)));
+      } catch {
+        setCommentedAssetIds(new Set());
+      }
+    }
+    fetchCommentedAssetIds();
+  }, []);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   // --- HANDLERS ---
   const handleLogout = () => {
@@ -490,10 +582,26 @@ export default function Home() {
   
   const handleRateAsset = async (rating: number) => {
     if (!selectedAsset || !user) return;
+    const userAnnotation = annotations.find(a => a.assetId === selectedAsset.id && a.userId === user.id);
+    // If clicking the same rating, remove it
+    if (userAnnotation && userAnnotation.rating === rating) {
+      setAnnotations(prev => prev.filter(a => !(a.assetId === selectedAsset.id && a.userId === user.id)));
+      try {
+        const response = await fetch(`/api/annotations?assetId=${selectedAsset.id}&userId=${user.id}`, {
+          method: 'DELETE',
+        });
+        if (!response.ok) throw new Error('Failed to remove rating');
+        fetchAssetRatings(selectedAsset.id);
+      } catch {
+        toast.error('Could not remove your rating.');
+      }
+      return;
+    }
+    // Otherwise, set/update rating as before
     const originalAnnotations = [...annotations];
     const newAnnotation = { assetId: selectedAsset.id, rating, userId: user.id, user };
     setAnnotations(prev => {
-      const existingIndex = prev.findIndex(a => a.assetId === selectedAsset!.id);
+      const existingIndex = prev.findIndex(a => a.assetId === selectedAsset.id);
       if (existingIndex > -1) {
         const updated = [...prev];
         updated[existingIndex] = newAnnotation;
@@ -501,7 +609,6 @@ export default function Home() {
       }
       return [...prev, newAnnotation];
     });
-
     try {
       const response = await fetch('/api/annotations', {
         method: 'POST',
@@ -512,10 +619,9 @@ export default function Home() {
       const savedAnnotation = await response.json();
       setAnnotations(prev => prev.map(a => a.assetId === savedAnnotation.assetId ? savedAnnotation : a));
       fetchAssetRatings(selectedAsset.id);
-    } catch (error) {
-      console.error(error);
+    } catch {
       setAnnotations(originalAnnotations);
-      toast.error("Could not save your rating.");
+      toast.error('Could not save your rating.');
     }
   };
 
@@ -533,8 +639,7 @@ export default function Home() {
         const createdComment = await response.json();
         setComments(prev => [...prev, createdComment]);
         setNewComment('');
-      } catch (error) {
-        console.error(error);
+      } catch {
         toast.error("Could not post your comment.");
       } finally {
         setIsSendingComment(false);
@@ -565,8 +670,7 @@ export default function Home() {
         });
         if (!response.ok) throw new Error( (await response.json()).message || 'Failed to update comment');
         fetchComments(updatedComment.assetId, userFilter || undefined); // re-fetch to be safe
-      } catch (error) {
-        console.error(error);
+      } catch {
         toast.error("Could not update comment.");
       } finally {
         setEditingContent('');
@@ -637,21 +741,7 @@ export default function Home() {
       if (!response.ok) throw new Error('Failed to toggle reaction');
       const updatedComment = await response.json();
       setComments(prev => prev.map(c => c.id === commentId ? updatedComment : c));
-    } catch (error) {
-      console.error('Failed to toggle reaction', error);
-      setComments(prevComments =>
-        prevComments.map(c => {
-          if (c.id === commentId) {
-            const existingReaction = c.reactions.find(r => r.userId === user.id);
-            const newReactions = existingReaction 
-              ? c.reactions.filter(r => r.userId !== user.id)
-              : [...c.reactions, { id: Date.now(), emoji, userId: user.id, user }];
-            
-            return { ...c, reactions: newReactions };
-          }
-          return c;
-        })
-      );
+    } catch {
       toast.error("Could not save reaction.");
     }
   };
@@ -702,7 +792,15 @@ export default function Home() {
       <Toaster position="top-right" richColors />
       <main className="h-screen w-screen flex flex-col bg-gray-50 dark:bg-black text-black dark:text-white">
         <header className="flex h-14 items-center gap-4 border-b bg-white dark:bg-gray-950 px-6 shrink-0">
-          <h1 className="text-lg font-semibold">Asset Rating</h1>
+          <h1 className="text-lg font-semibold">The Asset Manager - BETA</h1>
+          <button
+            className="ml-4 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+            onClick={() => setDarkMode(dm => !dm)}
+            aria-label="Toggle dark mode"
+            type="button"
+          >
+            {darkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-700" />}
+          </button>
           <div className="ml-auto flex items-center gap-4">
             <span className="text-sm text-gray-500 dark:text-gray-400">
               Welcome, {user.username}
@@ -816,6 +914,8 @@ export default function Home() {
                        selectedAsset={selectedAsset}
                        onSelectAsset={handleSelectAsset}
                        onToggleFolder={handleToggleFolder}
+                       annotations={annotations}
+                       commentedAssetIds={commentedAssetIds}
                      />
                    ))
                  )
