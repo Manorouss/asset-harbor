@@ -396,7 +396,7 @@ export default function Home() {
       if (path) {
         setTree(prevTree => updateTreeState(prevTree, path, data));
       } else {
-        setTree(data);
+        setTree(sortAssets(data));
         fetchAssetMetadata(data); // Fetch metadata on initial load
       }
       return data; // Return data for chaining
