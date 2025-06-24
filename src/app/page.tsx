@@ -792,7 +792,9 @@ export default function Home() {
       <Toaster position="top-right" richColors />
       <main className="h-screen w-screen flex flex-col bg-gray-50 dark:bg-black text-black dark:text-white">
         <header className="flex h-14 items-center gap-4 border-b bg-white dark:bg-gray-950 px-6 shrink-0">
-          <h1 className="text-lg font-semibold">The Asset Manager - BETA</h1>
+          <h1 className="text-lg font-semibold">
+            <b>The Asset Manager</b> <span>(Beta)</span> - <i>Concept Manufacturng</i>
+          </h1>
           <button
             className="ml-4 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
             onClick={() => setDarkMode(dm => !dm)}
