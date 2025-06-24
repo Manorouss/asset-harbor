@@ -149,25 +149,4 @@ export async function PATCH(request: Request) {
         console.error('Failed to update comment:', error);
         return NextResponse.json({ message: 'Failed to update comment' }, { status: 500 });
     }
-}
-
-// DELETE /api/comments/purge
-// Body: { userId: number }
-// Deletes all comments if user is admin
-export async function PURGE(request: NextRequest) {
-    try {
-        const { userId } = await request.json();
-        if (!userId) {
-            return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
-        }
-        const user = await prisma.user.findUnique({ where: { id: userId } });
-        if (!user || !user.isAdmin) {
-            return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
-        }
-        await prisma.comment.deleteMany({});
-        return NextResponse.json({ success: true });
-    } catch (error) {
-        console.error('Failed to purge comments:', error);
-        return NextResponse.json({ error: 'Failed to purge comments' }, { status: 500 });
-    }
 } 
