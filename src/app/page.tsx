@@ -551,7 +551,6 @@ export default function Home() {
 
   const handleUpdateComment = async (commentId: number) => {
     if (editingContent.trim() && user) {
-      const originalComments = [...comments];
       const updatedComment = comments.find(c => c.id === commentId);
       if(!updatedComment) return;
 
@@ -568,7 +567,6 @@ export default function Home() {
         fetchComments(updatedComment.assetId, userFilter || undefined); // re-fetch to be safe
       } catch (error) {
         console.error(error);
-        setComments(originalComments);
         toast.error("Could not update comment.");
       } finally {
         setEditingContent('');
@@ -593,7 +591,6 @@ export default function Home() {
 
   const handleDeleteComment = async (commentId: number) => {
     if (!user) return;
-    const originalComments = [...comments];
     setComments(prev => prev.filter(c => c.id !== commentId));
     try {
       const response = await fetch(`/api/comments`, {
@@ -604,16 +601,13 @@ export default function Home() {
   
       if (!response.ok) throw new Error((await response.json()).message || 'Failed to delete comment');
       toast.success("Comment deleted.");
-    } catch (error) {
-      console.error(error);
-      setComments(originalComments);
+    } catch {
       toast.error("Could not delete comment.");
     }
   };
   
   const handleReaction = async (commentId: number, emoji: string) => {
     if (!user) return;
-    const originalComments = [...comments];
     
     // Optimistic update
     setComments(prevComments =>
@@ -645,7 +639,19 @@ export default function Home() {
       setComments(prev => prev.map(c => c.id === commentId ? updatedComment : c));
     } catch (error) {
       console.error('Failed to toggle reaction', error);
-      setComments(originalComments);
+      setComments(prevComments =>
+        prevComments.map(c => {
+          if (c.id === commentId) {
+            const existingReaction = c.reactions.find(r => r.userId === user.id);
+            const newReactions = existingReaction 
+              ? c.reactions.filter(r => r.userId !== user.id)
+              : [...c.reactions, { id: Date.now(), emoji, userId: user.id, user }];
+            
+            return { ...c, reactions: newReactions };
+          }
+          return c;
+        })
+      );
       toast.error("Could not save reaction.");
     }
   };
@@ -675,7 +681,7 @@ export default function Home() {
       setAnnotations([]);
       setAllRatings([]);
       fetchTree();
-    } catch (error) {
+    } catch {
       toast.error('Failed to clear all comments/ratings.');
     }
   };
