@@ -1,37 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Asset Rating App
 
-## Dropbox Asset Browser
+Asset Rating App is a Dropbox-backed review workspace for teams that need to browse shared assets, rate them quickly, and keep feedback attached to the file.
 
-This app lets you browse and rate assets in your Dropbox team folders. Only the four main folders are shown: 1 - Customers, 2 - Sales, 3 - Marketing, 4 - Product Assets.
+## Public Showcase
 
-## Getting Started
+- Live access page: [asset-rating-app.vercel.app/login](https://asset-rating-app.vercel.app/login)
+- Read-only demo: [asset-rating-app.vercel.app/demo](https://asset-rating-app.vercel.app/demo)
+- GitHub repository: [github.com/Manorouss/asset-rating-app](https://github.com/Manorouss/asset-rating-app)
 
-First, run the development server:
+The public demo is intentionally read-only. It shows the workflow without exposing private Dropbox content or internal credentials.
+
+## What The App Does
+
+- Browses a constrained set of Dropbox team folders.
+- Shows file previews for common asset types.
+- Lets collaborators rate assets with positive, neutral, and negative sentiment.
+- Stores comments and emoji reactions per asset.
+- Surfaces filterable review activity across the workspace.
+
+## Local Development
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000/login](http://localhost:3000/login) for the public access page or [http://localhost:3000/demo](http://localhost:3000/demo) for the read-only walkthrough.
 
-You can start editing the page by modifying `src/app/page.tsx`. The page auto-updates as you edit the file.
+## Environment
 
-## Features
-- Browse your Dropbox team folders
-- Rate files with stars and happy/sad faces
-- Leave comments on files
+This project expects the following environment variables for the live workspace:
 
-## Configuration
-- Requires a Dropbox API access token with appropriate team permissions.
-- Set your token in `.env.local` as `DROPBOX_ACCESS_TOKEN`.
+- `DATABASE_URL`
+- `DROPBOX_APP_KEY`
+- `DROPBOX_APP_SECRET`
+- `DROPBOX_REFRESH_TOKEN`
+- `DROPBOX_IMPERSONATED_USER_ID`
 
-## Learn More
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Dropbox API Docs](https://www.dropbox.com/developers/documentation/http/documentation)
+The `/demo` route does not require Dropbox access.
 
-## Deploy on Vercel
+## Deployment Notes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The production build runs:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+prisma generate && prisma db push && next build
+```
+
+For Vercel, make sure the database and Dropbox environment variables are configured in the project settings before promoting the deployment.

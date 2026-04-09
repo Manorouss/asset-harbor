@@ -1,0 +1,12 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="900" rx="48" fill="#F3EEE6"/>
+  <rect x="170" y="60" width="860" height="780" rx="30" fill="white"/>
+  <rect x="232" y="124" width="736" height="96" rx="24" fill="#173540"/>
+  <text x="282" y="184" fill="#FFF8F0" font-family="Arial, sans-serif" font-size="30" font-weight="700">Retail spec sheet</text>
+  <rect x="232" y="270" width="736" height="180" rx="24" fill="#F5F0E8"/>
+  <rect x="232" y="490" width="340" height="240" rx="24" fill="#F5F0E8"/>
+  <rect x="628" y="490" width="340" height="240" rx="24" fill="#F5F0E8"/>
+  <text x="270" y="340" fill="#1F2937" font-family="Arial, sans-serif" font-size="24" font-weight="700">Dimensions / materials / packs</text>
+  <text x="270" y="570" fill="#1F2937" font-family="Arial, sans-serif" font-size="24" font-weight="700">Retail notes</text>
+  <text x="666" y="570" fill="#1F2937" font-family="Arial, sans-serif" font-size="24" font-weight="700">Distribution rules</text>
+</svg>
