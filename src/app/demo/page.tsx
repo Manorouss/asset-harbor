@@ -800,13 +800,13 @@ export default function DemoPage() {
                 </div>
               ) : (
                 <>
-                  <div className="shrink-0 border-b px-4 py-4">
+                  <div className="shrink-0 border-b px-4 py-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <h3 className="truncate text-lg font-semibold" title={selectedAsset.name}>
                           {selectedAsset.name}
                         </h3>
-                        <p className="mt-1 line-clamp-3 text-sm text-gray-500 dark:text-gray-400">
+                        <p className="mt-1 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
                           {selectedAsset.description}
                         </p>
                       </div>
@@ -829,7 +829,7 @@ export default function DemoPage() {
                         {detailsExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       </button>
                       {detailsExpanded ? (
-                        <div className="max-h-[34vh] overflow-y-auto border-t bg-gray-50/60 px-4 py-4 dark:bg-gray-950/60">
+                        <div className="max-h-[38vh] overflow-y-auto overscroll-contain border-t bg-gray-50/60 px-4 py-4 dark:bg-gray-950/60">
                           <div className="space-y-4">
                             <div className="rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-950">
                               <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
@@ -931,10 +931,10 @@ export default function DemoPage() {
                         {commentsExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       </button>
 
-                      <div className="relative min-h-0 flex-1 overflow-hidden">
-                        <div className="h-full overflow-y-auto pb-[72px]">
-                          {commentsExpanded ? (
-                            <div className="space-y-4 p-4">
+                      <div className="flex min-h-0 flex-1 flex-col">
+                        {commentsExpanded ? (
+                          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4">
+                            <div className="space-y-4">
                               {currentComments.length > 0 ? (
                                 currentComments.map((comment) => renderComment(comment))
                               ) : (
@@ -943,27 +943,28 @@ export default function DemoPage() {
                                 </p>
                               )}
                             </div>
-                          ) : (
-                            <div className="flex min-h-full items-end p-4">
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
-                                Expand comments to read the thread. You can still add a new comment below.
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                        <div className="absolute inset-x-0 bottom-0 border-t bg-white/95 px-3 py-3 shadow-[0_-8px_24px_rgba(15,23,42,0.06)] backdrop-blur dark:bg-gray-950/95">
-                          <div className="flex items-center gap-2">
-                            <Input
+                          </div>
+                        ) : (
+                          <div className="flex-1 bg-gray-50/30 dark:bg-gray-950/20" />
+                        )}
+
+                        <div className="shrink-0 border-t bg-white px-4 py-3 dark:bg-gray-950">
+                          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
+                            Add Comment
+                          </p>
+                          <div className="flex items-end gap-2">
+                            <Textarea
                               placeholder="Add a comment..."
                               value={newComment}
                               onChange={(event) => setNewComment(event.target.value)}
-                              className="h-10 flex-1 bg-gray-100 dark:bg-gray-800"
+                              className="min-h-[72px] flex-1 resize-none bg-gray-100 text-sm dark:bg-gray-800"
                             />
                             <Button
                               type="button"
                               onClick={handleCommentSubmit}
                               disabled={isSendingComment || !newComment.trim()}
                               size="icon"
+                              className="mb-1 shrink-0"
                             >
                               {isSendingComment ? (
                                 <LoaderCircle className="h-4 w-4 animate-spin" />
