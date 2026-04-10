@@ -935,54 +935,56 @@ export default function DemoPage() {
                         {commentsExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       </button>
 
-                      {commentsExpanded ? (
-                        <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] overflow-hidden">
-                          <div className="min-h-0 overflow-y-auto">
+                      <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] overflow-hidden">
+                        <div className="min-h-0 overflow-y-auto">
+                          {commentsExpanded ? (
                             <div className="space-y-4 p-4">
                               {currentComments.length > 0 ? (
                                 currentComments.map((comment) => renderComment(comment))
                               ) : (
                                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                                  No comments yet. Add one to test the thread.
+                                  No comments yet. Add one to start the thread.
                                 </p>
                               )}
                             </div>
+                          ) : (
+                            <div className="flex min-h-full items-end p-4">
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                Expand comments to read the thread. You can still add a new comment below.
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                        <div className="shrink-0 space-y-3 border-t bg-white p-4 dark:bg-gray-950">
+                          <div className="flex items-center gap-1">
+                            {['😊', '😐', '😞', '👍', '🔥'].map((emoji) => (
+                              <button
+                                key={emoji}
+                                type="button"
+                                onClick={() => addEmojiToComposer(emoji)}
+                                className="rounded-full px-2 py-1 text-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                              >
+                                {emoji}
+                              </button>
+                            ))}
                           </div>
-                          <div className="shrink-0 space-y-3 border-t bg-white p-4 dark:bg-gray-950">
-                            <div className="flex items-center gap-1">
-                              {['😊', '😐', '😞', '👍', '🔥'].map((emoji) => (
-                                <button
-                                  key={emoji}
-                                  type="button"
-                                  onClick={() => addEmojiToComposer(emoji)}
-                                  className="rounded-full px-2 py-1 text-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
-                                >
-                                  {emoji}
-                                </button>
-                              ))}
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <Textarea
-                                placeholder="Type your comment..."
-                                value={newComment}
-                                onChange={(event) => setNewComment(event.target.value)}
-                                className="min-h-[84px] resize-none bg-gray-100 dark:bg-gray-800"
-                              />
-                              <Button type="button" onClick={handleCommentSubmit} disabled={isSendingComment} size="icon">
-                                {isSendingComment ? (
-                                  <LoaderCircle className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <SendHorizontal className="h-4 w-4" />
-                                )}
-                              </Button>
-                            </div>
+                          <div className="flex items-start gap-2">
+                            <Textarea
+                              placeholder="Type your comment..."
+                              value={newComment}
+                              onChange={(event) => setNewComment(event.target.value)}
+                              className="min-h-[96px] resize-none bg-gray-100 dark:bg-gray-800"
+                            />
+                            <Button type="button" onClick={handleCommentSubmit} disabled={isSendingComment} size="icon">
+                              {isSendingComment ? (
+                                <LoaderCircle className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <SendHorizontal className="h-4 w-4" />
+                              )}
+                            </Button>
                           </div>
                         </div>
-                      ) : (
-                        <div className="p-4 text-sm text-gray-500 dark:text-gray-400">
-                          Expand comments to read or add feedback.
-                        </div>
-                      )}
+                      </div>
                     </div>
                   </div>
                 </>
