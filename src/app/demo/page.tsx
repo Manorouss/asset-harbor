@@ -833,8 +833,8 @@ export default function DemoPage() {
                         {detailsExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       </button>
                       {detailsExpanded ? (
-                        <ScrollArea className="max-h-[34vh] border-t">
-                          <div className="space-y-4 bg-gray-50/60 px-4 py-4 dark:bg-gray-950/60">
+                        <div className="max-h-[34vh] overflow-y-auto border-t bg-gray-50/60 px-4 py-4 dark:bg-gray-950/60">
+                          <div className="space-y-4">
                             <div className="rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-950">
                               <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
                                 Your Review
@@ -921,7 +921,7 @@ export default function DemoPage() {
                               </div>
                             ) : null}
                           </div>
-                        </ScrollArea>
+                        </div>
                       ) : null}
                     </div>
 
@@ -936,8 +936,8 @@ export default function DemoPage() {
                       </button>
 
                       {commentsExpanded ? (
-                        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-                          <ScrollArea className="min-h-0 flex-1">
+                        <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] overflow-hidden">
+                          <div className="min-h-0 overflow-y-auto">
                             <div className="space-y-4 p-4">
                               {currentComments.length > 0 ? (
                                 currentComments.map((comment) => renderComment(comment))
@@ -947,7 +947,7 @@ export default function DemoPage() {
                                 </p>
                               )}
                             </div>
-                          </ScrollArea>
+                          </div>
                           <div className="shrink-0 space-y-3 border-t bg-white p-4 dark:bg-gray-950">
                             <div className="flex items-center gap-1">
                               {['😊', '😐', '😞', '👍', '🔥'].map((emoji) => (
