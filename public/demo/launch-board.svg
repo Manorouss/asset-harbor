@@ -1,47 +1,42 @@
 <svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="900" rx="40" fill="#ECE8E1"/>
-  <rect x="60" y="50" width="1080" height="800" rx="28" fill="#F8F6F2"/>
-  <rect x="60" y="50" width="1080" height="56" rx="28" fill="#E4DED4"/>
-  <circle cx="102" cy="78" r="8" fill="#FF5F57"/>
-  <circle cx="130" cy="78" r="8" fill="#FEBC2E"/>
-  <circle cx="158" cy="78" r="8" fill="#28C840"/>
-  <text x="505" y="84" fill="#334155" font-family="Arial, sans-serif" font-size="18" font-weight="700">Retail launch board.png</text>
-  <rect x="96" y="134" width="420" height="300" rx="22" fill="#163247"/>
-  <text x="128" y="178" fill="#D1FAE5" font-family="Arial, sans-serif" font-size="15" font-weight="700">Pinned overview</text>
-  <text x="128" y="236" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="42" font-weight="700">Launch story</text>
-  <text x="128" y="286" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="42" font-weight="700">across four clouds</text>
-  <text x="128" y="332" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="22">Keep campaign planning, creative, retail specs, and exec notes in one workspace.</text>
-  <rect x="128" y="366" width="160" height="38" rx="19" fill="#F97316"/>
-  <text x="167" y="390" fill="#FFF7ED" font-family="Arial, sans-serif" font-size="16" font-weight="700">Prospect demo</text>
-  <rect x="546" y="134" width="262" height="186" rx="22" fill="#FFFFFF"/>
-  <text x="576" y="176" fill="#111827" font-family="Arial, sans-serif" font-size="18" font-weight="700">Channels</text>
-  <rect x="576" y="196" width="198" height="18" rx="9" fill="#E2E8F0"/>
-  <rect x="576" y="226" width="138" height="18" rx="9" fill="#BFDBFE"/>
-  <rect x="576" y="256" width="172" height="18" rx="9" fill="#C7D2FE"/>
-  <rect x="838" y="134" width="266" height="186" rx="22" fill="#FFFFFF"/>
-  <text x="868" y="176" fill="#111827" font-family="Arial, sans-serif" font-size="18" font-weight="700">Cloud mix</text>
-  <rect x="870" y="204" width="32" height="32" rx="10" fill="#DBEAFE"/>
-  <rect x="916" y="204" width="32" height="32" rx="10" fill="#DCFCE7"/>
-  <rect x="962" y="204" width="32" height="32" rx="10" fill="#E0E7FF"/>
-  <rect x="1008" y="204" width="32" height="32" rx="10" fill="#E5E7EB"/>
-  <text x="870" y="264" fill="#475569" font-family="Arial, sans-serif" font-size="16">Dropbox, Drive, OneDrive, iCloud</text>
-  <rect x="96" y="462" width="320" height="158" rx="20" fill="#FFFFFF"/>
-  <rect x="440" y="462" width="320" height="158" rx="20" fill="#FFFFFF"/>
-  <rect x="784" y="462" width="320" height="158" rx="20" fill="#FFFFFF"/>
-  <text x="124" y="500" fill="#111827" font-family="Arial, sans-serif" font-size="18" font-weight="700">Creative review</text>
-  <text x="468" y="500" fill="#111827" font-family="Arial, sans-serif" font-size="18" font-weight="700">Retail signoff</text>
-  <text x="812" y="500" fill="#111827" font-family="Arial, sans-serif" font-size="18" font-weight="700">Leadership notes</text>
-  <rect x="124" y="526" width="264" height="18" rx="9" fill="#E2E8F0"/>
-  <rect x="124" y="556" width="220" height="18" rx="9" fill="#E2E8F0"/>
-  <rect x="468" y="526" width="264" height="18" rx="9" fill="#E2E8F0"/>
-  <rect x="468" y="556" width="190" height="18" rx="9" fill="#E2E8F0"/>
-  <rect x="812" y="526" width="264" height="18" rx="9" fill="#E2E8F0"/>
-  <rect x="812" y="556" width="230" height="18" rx="9" fill="#E2E8F0"/>
-  <rect x="96" y="648" width="1008" height="164" rx="20" fill="#FFFFFF"/>
-  <text x="126" y="690" fill="#111827" font-family="Arial, sans-serif" font-size="20" font-weight="700">Timeline</text>
-  <line x1="148" y1="752" x2="1064" y2="752" stroke="#CBD5E1" stroke-width="8" stroke-linecap="round"/>
-  <rect x="178" y="726" width="220" height="52" rx="16" fill="#0EA5E9"/>
-  <rect x="430" y="726" width="250" height="52" rx="16" fill="#F97316"/>
-  <rect x="716" y="726" width="200" height="52" rx="16" fill="#2563EB"/>
-  <rect x="938" y="726" width="96" height="52" rx="16" fill="#9CA3AF"/>
+  <rect width="1200" height="900" fill="#F2EEE7"/>
+  <rect x="88" y="86" width="1024" height="728" rx="28" fill="#F8F6F2"/>
+  <rect x="124" y="124" width="430" height="300" rx="22" fill="#173540"/>
+  <text x="160" y="176" fill="#D1FAE5" font-family="Arial, sans-serif" font-size="16" font-weight="700">Pinned overview</text>
+  <text x="160" y="238" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="44" font-weight="700">Launch board</text>
+  <text x="160" y="290" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="44" font-weight="700">for every cloud</text>
+  <text x="160" y="344" fill="#CBD5E1" font-family="Arial, sans-serif" font-size="24">Use one board to tie the Dropbox video, Drive docs, OneDrive specs, and iCloud notes together.</text>
+  <rect x="160" y="372" width="170" height="42" rx="21" fill="#F97316"/>
+  <text x="206" y="399" fill="#FFF7ED" font-family="Arial, sans-serif" font-size="18" font-weight="700">Prospect demo</text>
+  <rect x="586" y="124" width="230" height="176" rx="18" fill="#FFFFFF"/>
+  <rect x="850" y="124" width="226" height="176" rx="18" fill="#FFFFFF"/>
+  <text x="616" y="162" fill="#111827" font-family="Arial, sans-serif" font-size="18" font-weight="700">Channels</text>
+  <rect x="616" y="188" width="166" height="14" rx="7" fill="#CBD5E1"/>
+  <rect x="616" y="214" width="142" height="14" rx="7" fill="#BFDBFE"/>
+  <rect x="616" y="240" width="154" height="14" rx="7" fill="#C7D2FE"/>
+  <text x="880" y="162" fill="#111827" font-family="Arial, sans-serif" font-size="18" font-weight="700">Clouds</text>
+  <rect x="882" y="190" width="32" height="32" rx="10" fill="#DBEAFE"/>
+  <rect x="928" y="190" width="32" height="32" rx="10" fill="#DCFCE7"/>
+  <rect x="974" y="190" width="32" height="32" rx="10" fill="#E0E7FF"/>
+  <rect x="1020" y="190" width="32" height="32" rx="10" fill="#E5E7EB"/>
+  <text x="882" y="254" fill="#475569" font-family="Arial, sans-serif" font-size="15">4 providers connected</text>
+  <rect x="124" y="458" width="280" height="148" rx="18" fill="#FFFFFF"/>
+  <rect x="428" y="458" width="280" height="148" rx="18" fill="#FFFFFF"/>
+  <rect x="732" y="458" width="344" height="148" rx="18" fill="#FFFFFF"/>
+  <text x="152" y="494" fill="#111827" font-family="Arial, sans-serif" font-size="18" font-weight="700">Creative review</text>
+  <text x="456" y="494" fill="#111827" font-family="Arial, sans-serif" font-size="18" font-weight="700">Retail signoff</text>
+  <text x="760" y="494" fill="#111827" font-family="Arial, sans-serif" font-size="18" font-weight="700">Leadership notes</text>
+  <rect x="152" y="518" width="214" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="152" y="542" width="198" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="456" y="518" width="214" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="456" y="542" width="174" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="760" y="518" width="270" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="760" y="542" width="238" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="124" y="644" width="952" height="130" rx="18" fill="#FFFFFF"/>
+  <text x="154" y="684" fill="#111827" font-family="Arial, sans-serif" font-size="20" font-weight="700">Timeline</text>
+  <line x1="178" y1="736" x2="1030" y2="736" stroke="#CBD5E1" stroke-width="10" stroke-linecap="round"/>
+  <rect x="206" y="708" width="194" height="56" rx="16" fill="#0EA5E9"/>
+  <rect x="436" y="708" width="220" height="56" rx="16" fill="#F97316"/>
+  <rect x="692" y="708" width="176" height="56" rx="16" fill="#2563EB"/>
+  <rect x="890" y="708" width="112" height="56" rx="16" fill="#9CA3AF"/>
 </svg>

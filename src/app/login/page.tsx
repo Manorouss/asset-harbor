@@ -63,7 +63,7 @@ export default function LoginPage() {
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gray-500 dark:text-gray-400">
             Concept Manufacturing
           </p>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">The Asset Manager</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Asset Harbor</h1>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             {isLogin ? 'Sign in to the live workspace, or open the read-only demo.' : 'Create an account for the live workspace.'}
           </p>

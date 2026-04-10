@@ -1,38 +1,29 @@
 <svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="900" rx="40" fill="#EFEAE2"/>
-  <rect x="58" y="48" width="1084" height="804" rx="28" fill="#FBFAF7"/>
-  <rect x="58" y="48" width="1084" height="56" rx="28" fill="#E7E0D6"/>
-  <circle cx="100" cy="76" r="8" fill="#FF5F57"/>
-  <circle cx="128" cy="76" r="8" fill="#FEBC2E"/>
-  <circle cx="156" cy="76" r="8" fill="#28C840"/>
-  <text x="468" y="82" fill="#334155" font-family="Arial, sans-serif" font-size="18" font-weight="700">Packaging concept board v3.png</text>
-  <rect x="102" y="136" width="996" height="76" rx="20" fill="#163247"/>
-  <text x="136" y="183" fill="#FFF7ED" font-family="Arial, sans-serif" font-size="28" font-weight="700">Shelf concept review</text>
-  <text x="832" y="183" fill="#FED7AA" font-family="Arial, sans-serif" font-size="18">Linked to OneDrive retail specs</text>
-  <rect x="102" y="244" width="288" height="532" rx="24" fill="#D4B08B"/>
-  <rect x="112" y="254" width="268" height="512" rx="20" fill="#F7F1E8"/>
-  <rect x="146" y="290" width="200" height="280" rx="18" fill="#E1C3A7"/>
-  <rect x="190" y="326" width="112" height="128" rx="12" fill="#FFF7ED"/>
-  <rect x="176" y="604" width="140" height="18" rx="9" fill="#8A5A44"/>
-  <rect x="160" y="636" width="172" height="14" rx="7" fill="#C7A17F"/>
-  <rect x="172" y="664" width="148" height="14" rx="7" fill="#C7A17F"/>
-  <text x="168" y="720" fill="#5B4033" font-family="Arial, sans-serif" font-size="22" font-weight="700">Calm retail</text>
-  <rect x="456" y="244" width="288" height="532" rx="24" fill="#E5D4C2"/>
-  <rect x="466" y="254" width="268" height="512" rx="20" fill="#F7F1E8"/>
-  <rect x="500" y="290" width="200" height="280" rx="18" fill="#DAB997"/>
-  <rect x="544" y="326" width="112" height="128" rx="12" fill="#FFF7ED"/>
-  <rect x="530" y="604" width="140" height="18" rx="9" fill="#8A5A44"/>
-  <rect x="514" y="636" width="172" height="14" rx="7" fill="#C7A17F"/>
-  <rect x="526" y="664" width="148" height="14" rx="7" fill="#C7A17F"/>
-  <text x="522" y="720" fill="#5B4033" font-family="Arial, sans-serif" font-size="22" font-weight="700">Mass shelf</text>
-  <rect x="810" y="244" width="288" height="532" rx="24" fill="#D56B3A"/>
-  <rect x="820" y="254" width="268" height="512" rx="20" fill="#F3D5BF"/>
-  <rect x="854" y="290" width="200" height="280" rx="18" fill="#CC5A2A"/>
-  <rect x="898" y="326" width="112" height="128" rx="12" fill="#FFF7ED"/>
-  <rect x="884" y="604" width="140" height="18" rx="9" fill="#7B341E"/>
-  <rect x="868" y="636" width="172" height="14" rx="7" fill="#FB923C"/>
-  <rect x="880" y="664" width="148" height="14" rx="7" fill="#FB923C"/>
-  <text x="876" y="720" fill="#7B341E" font-family="Arial, sans-serif" font-size="22" font-weight="700">High contrast</text>
-  <rect x="102" y="796" width="996" height="18" rx="9" fill="#E2D8CB"/>
-  <rect x="102" y="796" width="628" height="18" rx="9" fill="#163247"/>
+  <rect width="1200" height="900" fill="#F1ECE4"/>
+  <rect x="70" y="72" width="1060" height="756" rx="28" fill="#FBFAF7"/>
+  <text x="118" y="138" fill="#173540" font-family="Arial, sans-serif" font-size="30" font-weight="700">Shelf concept review</text>
+  <text x="840" y="138" fill="#92400E" font-family="Arial, sans-serif" font-size="18">Linked to retail spec sheet</text>
+  <rect x="118" y="190" width="288" height="520" rx="24" fill="#F8F2EA"/>
+  <rect x="456" y="190" width="288" height="520" rx="24" fill="#F8F2EA"/>
+  <rect x="794" y="190" width="288" height="520" rx="24" fill="#F8F2EA"/>
+  <rect x="160" y="228" width="204" height="280" rx="20" fill="#D7B495"/>
+  <rect x="192" y="264" width="140" height="148" rx="14" fill="#FFF8F0"/>
+  <rect x="498" y="228" width="204" height="280" rx="20" fill="#DAB99A"/>
+  <rect x="530" y="264" width="140" height="148" rx="14" fill="#FFF8F0"/>
+  <rect x="836" y="228" width="204" height="280" rx="20" fill="#CF6433"/>
+  <rect x="868" y="264" width="140" height="148" rx="14" fill="#FFF8F0"/>
+  <rect x="170" y="550" width="184" height="16" rx="8" fill="#8A5A44"/>
+  <rect x="170" y="578" width="154" height="12" rx="6" fill="#C7A17F"/>
+  <rect x="170" y="602" width="170" height="12" rx="6" fill="#C7A17F"/>
+  <rect x="508" y="550" width="184" height="16" rx="8" fill="#8A5A44"/>
+  <rect x="508" y="578" width="154" height="12" rx="6" fill="#C7A17F"/>
+  <rect x="508" y="602" width="170" height="12" rx="6" fill="#C7A17F"/>
+  <rect x="846" y="550" width="184" height="16" rx="8" fill="#7B341E"/>
+  <rect x="846" y="578" width="154" height="12" rx="6" fill="#FB923C"/>
+  <rect x="846" y="602" width="170" height="12" rx="6" fill="#FB923C"/>
+  <text x="170" y="662" fill="#5B4033" font-family="Arial, sans-serif" font-size="22" font-weight="700">Calm retail</text>
+  <text x="508" y="662" fill="#5B4033" font-family="Arial, sans-serif" font-size="22" font-weight="700">Mass shelf</text>
+  <text x="846" y="662" fill="#7B341E" font-family="Arial, sans-serif" font-size="22" font-weight="700">Hero contrast</text>
+  <rect x="118" y="744" width="964" height="22" rx="11" fill="#E2D8CB"/>
+  <rect x="118" y="744" width="612" height="22" rx="11" fill="#173540"/>
 </svg>

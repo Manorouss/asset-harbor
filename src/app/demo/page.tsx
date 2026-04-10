@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   ChevronDown,
   ChevronRight,
@@ -44,6 +45,17 @@ type DemoFilters = {
 };
 
 const reactionEmojis = ['👍', '❤️', '😂', '😮', '👀'];
+const demoAppName = 'Asset Harbor';
+
+function collectFolderIds(nodes: DemoAsset[]): string[] {
+  return nodes.flatMap((node) => {
+    if (node.type !== 'folder') {
+      return [];
+    }
+
+    return [node.id, ...collectFolderIds(node.children ?? [])];
+  });
+}
 
 function DropboxIcon({ className = 'h-4 w-4' }: { className?: string }) {
   return (
@@ -112,37 +124,63 @@ function DemoTreeItem({
   node,
   selectedAsset,
   onSelectAsset,
+  expandedIds,
+  onToggleFolder,
 }: {
   node: DemoAsset;
   selectedAsset: DemoAsset | null;
   onSelectAsset: (_asset: DemoAsset) => void;
+  expandedIds: Set<string>;
+  onToggleFolder: (_folderId: string) => void;
 }) {
   const isFolder = node.type === 'folder';
+  const isExpanded = expandedIds.has(node.id);
 
   if (isFolder) {
     return (
       <div>
-        <div className="flex items-center rounded-md p-1 text-sm text-gray-800 dark:text-gray-100">
+        <button
+          type="button"
+          onClick={() => onToggleFolder(node.id)}
+          className="flex w-full items-center rounded-md p-1 text-sm text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800"
+        >
           <div className="w-6 text-gray-500">
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown
+              className={cn('h-4 w-4 transition-transform duration-200', isExpanded ? 'rotate-0' : '-rotate-90')}
+            />
           </div>
           {node.source ? (
             <CloudIcon source={node.source} className="mr-2 h-4 w-4" />
           ) : (
             <Folder className="mr-2 h-4 w-4 text-[#4F8EF7]" />
           )}
-          <span>{node.name}</span>
-        </div>
-        <div className="ml-3 border-l border-gray-200 pl-5 dark:border-gray-700">
-          {(node.children ?? []).map((child) => (
-            <DemoTreeItem
-              key={child.id}
-              node={child}
-              selectedAsset={selectedAsset}
-              onSelectAsset={onSelectAsset}
-            />
-          ))}
-        </div>
+          <span className="truncate">{node.name}</span>
+        </button>
+        <AnimatePresence initial={false}>
+          {isExpanded ? (
+            <motion.div
+              key={`${node.id}-children`}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+              className="overflow-hidden"
+            >
+              <div className="ml-3 border-l border-gray-200 pl-5 dark:border-gray-700">
+                {(node.children ?? []).map((child) => (
+                  <DemoTreeItem
+                    key={child.id}
+                    node={child}
+                    selectedAsset={selectedAsset}
+                    onSelectAsset={onSelectAsset}
+                    expandedIds={expandedIds}
+                    onToggleFolder={onToggleFolder}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
       </div>
     );
   }
@@ -170,9 +208,11 @@ function DemoTreeItem({
 
 export default function DemoPage() {
   const allAssets = useMemo(() => flattenDemoAssets(demoTree), []);
+  const initialExpandedIds = useMemo(() => collectFolderIds(demoTree), []);
   const [selectedAsset, setSelectedAsset] = useState<DemoAsset | null>(
     allAssets.find((asset) => asset.type === 'video') ?? allAssets[0] ?? null
   );
+  const [expandedFolderIds, setExpandedFolderIds] = useState<Set<string>>(() => new Set(initialExpandedIds));
   const [commentsByAsset, setCommentsByAsset] = useState<Record<string, DemoComment[]>>(() =>
     Object.fromEntries(allAssets.map((asset) => [asset.id, asset.comments ?? []]))
   );
@@ -250,6 +290,20 @@ export default function DemoPage() {
     ) : (
       <File className="h-16 w-16 text-gray-300" />
     );
+
+  function toggleFolder(folderId: string) {
+    setExpandedFolderIds((current) => {
+      const next = new Set(current);
+
+      if (next.has(folderId)) {
+        next.delete(folderId);
+      } else {
+        next.add(folderId);
+      }
+
+      return next;
+    });
+  }
 
   function addEmojiToComposer(emoji: string) {
     setNewComment((current) => `${current}${current ? ' ' : ''}${emoji}`);
@@ -334,7 +388,7 @@ export default function DemoPage() {
       <div className="h-screen w-screen overflow-hidden bg-gray-50 text-black dark:bg-black dark:text-white">
         <header className="flex h-14 items-center gap-4 border-b bg-white px-6 dark:bg-gray-950">
           <h1 className="text-lg font-semibold">
-            <b>The Asset Manager</b> <span>(Demo)</span> - <i>Concept Manufacturing</i>
+            <b>{demoAppName}</b> <span>(Demo)</span> - <i>Concept Manufacturing</i>
           </h1>
           <button
             className="ml-4 rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-800"
@@ -474,6 +528,8 @@ export default function DemoPage() {
                       node={node}
                       selectedAsset={selectedAsset}
                       onSelectAsset={setSelectedAsset}
+                      expandedIds={expandedFolderIds}
+                      onToggleFolder={toggleFolder}
                     />
                   ))
                 )}

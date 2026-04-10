@@ -1,37 +1,31 @@
 <svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="900" rx="40" fill="#ECE7DF"/>
-  <rect x="206" y="56" width="788" height="788" rx="20" fill="#FFFFFF"/>
-  <rect x="206" y="56" width="788" height="44" rx="20" fill="#F4F4F5"/>
-  <circle cx="238" cy="78" r="7" fill="#FF5F57"/>
-  <circle cx="262" cy="78" r="7" fill="#FEBC2E"/>
-  <circle cx="286" cy="78" r="7" fill="#28C840"/>
-  <text x="472" y="84" fill="#334155" font-family="Arial, sans-serif" font-size="15" font-weight="700">Campaign onboarding one-pager.pdf</text>
-  <rect x="258" y="132" width="684" height="146" rx="20" fill="#173540"/>
-  <text x="298" y="186" fill="#FFF8F0" font-family="Arial, sans-serif" font-size="34" font-weight="700">Unified Asset Review</text>
-  <text x="298" y="230" fill="#D8E8EE" font-family="Arial, sans-serif" font-size="22">Bring Dropbox, Google Drive, OneDrive, and iCloud files into one review flow.</text>
-  <rect x="258" y="320" width="320" height="180" rx="18" fill="#F8FAFC"/>
-  <rect x="622" y="320" width="320" height="180" rx="18" fill="#F8FAFC"/>
-  <text x="288" y="360" fill="#111827" font-family="Arial, sans-serif" font-size="20" font-weight="700">What teams see</text>
-  <rect x="288" y="386" width="232" height="14" rx="7" fill="#CBD5E1"/>
-  <rect x="288" y="412" width="210" height="14" rx="7" fill="#CBD5E1"/>
-  <rect x="288" y="438" width="224" height="14" rx="7" fill="#CBD5E1"/>
-  <text x="652" y="360" fill="#111827" font-family="Arial, sans-serif" font-size="20" font-weight="700">Why it matters</text>
-  <rect x="652" y="386" width="232" height="14" rx="7" fill="#CBD5E1"/>
-  <rect x="652" y="412" width="204" height="14" rx="7" fill="#CBD5E1"/>
-  <rect x="652" y="438" width="216" height="14" rx="7" fill="#CBD5E1"/>
-  <rect x="258" y="536" width="684" height="118" rx="18" fill="#F8FAFC"/>
-  <text x="288" y="576" fill="#111827" font-family="Arial, sans-serif" font-size="20" font-weight="700">Demo workflow</text>
-  <rect x="288" y="600" width="112" height="26" rx="13" fill="#DBEAFE"/>
-  <rect x="414" y="600" width="130" height="26" rx="13" fill="#DCFCE7"/>
-  <rect x="558" y="600" width="128" height="26" rx="13" fill="#E0E7FF"/>
-  <rect x="700" y="600" width="118" height="26" rx="13" fill="#E5E7EB"/>
-  <text x="312" y="618" fill="#1D4ED8" font-family="Arial, sans-serif" font-size="14" font-weight="700">Dropbox</text>
-  <text x="444" y="618" fill="#15803D" font-family="Arial, sans-serif" font-size="14" font-weight="700">Drive</text>
-  <text x="590" y="618" fill="#3730A3" font-family="Arial, sans-serif" font-size="14" font-weight="700">OneDrive</text>
-  <text x="734" y="618" fill="#4B5563" font-family="Arial, sans-serif" font-size="14" font-weight="700">iCloud</text>
-  <rect x="258" y="690" width="684" height="28" rx="14" fill="#E5DED3"/>
-  <rect x="258" y="690" width="446" height="28" rx="14" fill="#173540"/>
-  <rect x="258" y="736" width="684" height="14" rx="7" fill="#E5E7EB"/>
-  <rect x="258" y="762" width="640" height="14" rx="7" fill="#E5E7EB"/>
-  <rect x="258" y="788" width="612" height="14" rx="7" fill="#E5E7EB"/>
+  <rect width="1200" height="900" fill="#EDE8E0"/>
+  <rect x="220" y="58" width="760" height="786" rx="18" fill="#FFFFFF"/>
+  <rect x="272" y="124" width="656" height="148" rx="20" fill="#173540"/>
+  <text x="316" y="186" fill="#FFF8F0" font-family="Arial, sans-serif" font-size="36" font-weight="700">Unified Asset Review</text>
+  <text x="316" y="232" fill="#D8E8EE" font-family="Arial, sans-serif" font-size="22">Bring Dropbox, Google Drive, OneDrive, and iCloud Drive into one review workflow.</text>
+  <rect x="272" y="318" width="304" height="188" rx="18" fill="#F8FAFC"/>
+  <rect x="624" y="318" width="304" height="188" rx="18" fill="#F8FAFC"/>
+  <text x="304" y="362" fill="#111827" font-family="Arial, sans-serif" font-size="20" font-weight="700">What teams see</text>
+  <rect x="304" y="388" width="222" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="304" y="414" width="198" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="304" y="440" width="214" height="12" rx="6" fill="#CBD5E1"/>
+  <text x="656" y="362" fill="#111827" font-family="Arial, sans-serif" font-size="20" font-weight="700">Why it matters</text>
+  <rect x="656" y="388" width="222" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="656" y="414" width="206" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="656" y="440" width="218" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="272" y="544" width="656" height="122" rx="18" fill="#F8FAFC"/>
+  <text x="304" y="586" fill="#111827" font-family="Arial, sans-serif" font-size="20" font-weight="700">Connected sources</text>
+  <rect x="304" y="608" width="116" height="28" rx="14" fill="#DBEAFE"/>
+  <rect x="434" y="608" width="138" height="28" rx="14" fill="#DCFCE7"/>
+  <rect x="586" y="608" width="132" height="28" rx="14" fill="#E0E7FF"/>
+  <rect x="732" y="608" width="134" height="28" rx="14" fill="#E5E7EB"/>
+  <text x="330" y="627" fill="#1D4ED8" font-family="Arial, sans-serif" font-size="14" font-weight="700">Dropbox</text>
+  <text x="469" y="627" fill="#15803D" font-family="Arial, sans-serif" font-size="14" font-weight="700">Google Drive</text>
+  <text x="617" y="627" fill="#3730A3" font-family="Arial, sans-serif" font-size="14" font-weight="700">OneDrive</text>
+  <text x="772" y="627" fill="#4B5563" font-family="Arial, sans-serif" font-size="14" font-weight="700">iCloud Drive</text>
+  <rect x="272" y="704" width="656" height="18" rx="9" fill="#E5DED3"/>
+  <rect x="272" y="704" width="438" height="18" rx="9" fill="#173540"/>
+  <rect x="272" y="746" width="656" height="14" rx="7" fill="#E5E7EB"/>
+  <rect x="272" y="772" width="624" height="14" rx="7" fill="#E5E7EB"/>
 </svg>

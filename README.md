@@ -1,6 +1,6 @@
-# Asset Rating App
+# Asset Harbor
 
-Asset Rating App is a Dropbox-backed review workspace for teams that need to browse shared assets, rate them quickly, and keep feedback attached to the file.
+Asset Harbor is a multi-cloud review workspace for teams that need to browse shared assets, preview files in one place, and keep ratings, comments, and reactions attached to the file.
 
 ## Public Showcase
 
@@ -8,12 +8,12 @@ Asset Rating App is a Dropbox-backed review workspace for teams that need to bro
 - Read-only demo: [asset-rating-app.vercel.app/demo](https://asset-rating-app.vercel.app/demo)
 - GitHub repository: [github.com/Manorouss/asset-rating-app](https://github.com/Manorouss/asset-rating-app)
 
-The public demo is intentionally read-only. It shows the workflow without exposing private Dropbox content or internal credentials.
+The public demo is intentionally temporary-only. Visitors can browse the workspace, expand folders, preview files, and play with comments and reactions without touching private cloud content or real credentials.
 
 ## What The App Does
 
-- Browses a constrained set of Dropbox team folders.
-- Shows file previews for common asset types.
+- Browses connected cloud folders from Dropbox, Google Drive, OneDrive, and iCloud Drive in one Finder-style workspace.
+- Shows file previews for common asset types like video, image, PDF, and document exports.
 - Lets collaborators rate assets with positive, neutral, and negative sentiment.
 - Stores comments and emoji reactions per asset.
 - Surfaces filterable review activity across the workspace.
@@ -37,7 +37,7 @@ This project expects the following environment variables for the live workspace:
 - `DROPBOX_REFRESH_TOKEN`
 - `DROPBOX_IMPERSONATED_USER_ID`
 
-The `/demo` route does not require Dropbox access.
+The `/demo` route does not require cloud access.
 
 ## Deployment Notes
 

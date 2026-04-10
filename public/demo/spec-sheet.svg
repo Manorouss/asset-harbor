@@ -1,52 +1,47 @@
 <svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="900" rx="40" fill="#EAE7E0"/>
-  <rect x="170" y="54" width="860" height="792" rx="24" fill="#FFFFFF"/>
-  <rect x="170" y="54" width="860" height="46" rx="24" fill="#F4F4F5"/>
-  <circle cx="204" cy="77" r="7" fill="#FF5F57"/>
-  <circle cx="228" cy="77" r="7" fill="#FEBC2E"/>
-  <circle cx="252" cy="77" r="7" fill="#28C840"/>
-  <text x="505" y="83" fill="#334155" font-family="Arial, sans-serif" font-size="16" font-weight="700">Retail spec sheet.pdf</text>
-  <text x="238" y="150" fill="#163247" font-family="Arial, sans-serif" font-size="34" font-weight="700">Retail Spec Sheet</text>
-  <text x="238" y="182" fill="#64748B" font-family="Arial, sans-serif" font-size="18">Spring Launch 2026 / final partner handoff</text>
-  <rect x="238" y="214" width="724" height="94" rx="18" fill="#F8FAFC"/>
-  <text x="268" y="250" fill="#0F172A" font-family="Arial, sans-serif" font-size="18" font-weight="700">Summary</text>
-  <rect x="268" y="266" width="178" height="12" rx="6" fill="#CBD5E1"/>
-  <rect x="458" y="266" width="142" height="12" rx="6" fill="#BFDBFE"/>
-  <rect x="612" y="266" width="138" height="12" rx="6" fill="#C7D2FE"/>
-  <rect x="762" y="266" width="152" height="12" rx="6" fill="#E2E8F0"/>
-  <rect x="238" y="334" width="724" height="208" rx="18" fill="#FFFFFF" stroke="#E5E7EB"/>
-  <rect x="238" y="334" width="724" height="40" rx="18" fill="#163247"/>
-  <text x="268" y="360" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="16" font-weight="700">SKU details</text>
-  <line x1="238" y1="430" x2="962" y2="430" stroke="#E5E7EB"/>
-  <line x1="238" y1="486" x2="962" y2="486" stroke="#E5E7EB"/>
-  <line x1="238" y1="542" x2="962" y2="542" stroke="#E5E7EB"/>
-  <line x1="450" y1="374" x2="450" y2="542" stroke="#E5E7EB"/>
-  <line x1="654" y1="374" x2="654" y2="542" stroke="#E5E7EB"/>
-  <line x1="828" y1="374" x2="828" y2="542" stroke="#E5E7EB"/>
-  <text x="268" y="402" fill="#0F172A" font-family="Arial, sans-serif" font-size="15" font-weight="700">Product</text>
-  <text x="480" y="402" fill="#0F172A" font-family="Arial, sans-serif" font-size="15" font-weight="700">Dimensions</text>
-  <text x="684" y="402" fill="#0F172A" font-family="Arial, sans-serif" font-size="15" font-weight="700">Materials</text>
-  <text x="856" y="402" fill="#0F172A" font-family="Arial, sans-serif" font-size="15" font-weight="700">Status</text>
-  <text x="268" y="458" fill="#475569" font-family="Arial, sans-serif" font-size="14">Starter kit display</text>
-  <text x="480" y="458" fill="#475569" font-family="Arial, sans-serif" font-size="14">18 x 12 x 8 in</text>
-  <text x="684" y="458" fill="#475569" font-family="Arial, sans-serif" font-size="14">Cardboard / PET</text>
-  <text x="856" y="458" fill="#16A34A" font-family="Arial, sans-serif" font-size="14">Approved</text>
-  <text x="268" y="514" fill="#475569" font-family="Arial, sans-serif" font-size="14">Endcap topper</text>
-  <text x="480" y="514" fill="#475569" font-family="Arial, sans-serif" font-size="14">24 x 14 x 4 in</text>
-  <text x="684" y="514" fill="#475569" font-family="Arial, sans-serif" font-size="14">Foamcore / vinyl</text>
-  <text x="856" y="514" fill="#16A34A" font-family="Arial, sans-serif" font-size="14">Approved</text>
-  <text x="268" y="570" fill="#475569" font-family="Arial, sans-serif" font-size="14">Shelf strip</text>
-  <text x="480" y="570" fill="#475569" font-family="Arial, sans-serif" font-size="14">36 x 2.5 in</text>
-  <text x="684" y="570" fill="#475569" font-family="Arial, sans-serif" font-size="14">Paper / matte coat</text>
-  <text x="856" y="570" fill="#16A34A" font-family="Arial, sans-serif" font-size="14">Approved</text>
-  <rect x="238" y="574" width="340" height="190" rx="18" fill="#F8FAFC"/>
-  <rect x="622" y="574" width="340" height="190" rx="18" fill="#F8FAFC"/>
-  <text x="268" y="614" fill="#0F172A" font-family="Arial, sans-serif" font-size="18" font-weight="700">Retail notes</text>
-  <rect x="268" y="636" width="250" height="12" rx="6" fill="#CBD5E1"/>
-  <rect x="268" y="662" width="224" height="12" rx="6" fill="#CBD5E1"/>
-  <rect x="268" y="688" width="206" height="12" rx="6" fill="#CBD5E1"/>
-  <text x="652" y="614" fill="#0F172A" font-family="Arial, sans-serif" font-size="18" font-weight="700">Distribution rules</text>
-  <rect x="652" y="636" width="250" height="12" rx="6" fill="#CBD5E1"/>
-  <rect x="652" y="662" width="210" height="12" rx="6" fill="#CBD5E1"/>
-  <rect x="652" y="688" width="230" height="12" rx="6" fill="#CBD5E1"/>
+  <rect width="1200" height="900" fill="#ECE8E1"/>
+  <rect x="182" y="58" width="836" height="784" rx="18" fill="#FFFFFF"/>
+  <text x="246" y="144" fill="#163247" font-family="Arial, sans-serif" font-size="34" font-weight="700">Retail Spec Sheet</text>
+  <text x="246" y="182" fill="#64748B" font-family="Arial, sans-serif" font-size="18">Spring Launch 2026 / approved partner handoff</text>
+  <rect x="246" y="222" width="708" height="86" rx="18" fill="#F8FAFC"/>
+  <text x="278" y="260" fill="#0F172A" font-family="Arial, sans-serif" font-size="18" font-weight="700">Summary</text>
+  <rect x="278" y="274" width="182" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="472" y="274" width="148" height="12" rx="6" fill="#BFDBFE"/>
+  <rect x="632" y="274" width="142" height="12" rx="6" fill="#C7D2FE"/>
+  <rect x="786" y="274" width="128" height="12" rx="6" fill="#E2E8F0"/>
+  <rect x="246" y="336" width="708" height="236" rx="18" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <rect x="246" y="336" width="708" height="42" rx="18" fill="#163247"/>
+  <text x="278" y="363" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="16" font-weight="700">SKU details</text>
+  <line x1="246" y1="432" x2="954" y2="432" stroke="#E5E7EB"/>
+  <line x1="246" y1="490" x2="954" y2="490" stroke="#E5E7EB"/>
+  <line x1="246" y1="548" x2="954" y2="548" stroke="#E5E7EB"/>
+  <line x1="442" y1="378" x2="442" y2="572" stroke="#E5E7EB"/>
+  <line x1="652" y1="378" x2="652" y2="572" stroke="#E5E7EB"/>
+  <line x1="812" y1="378" x2="812" y2="572" stroke="#E5E7EB"/>
+  <text x="278" y="412" fill="#0F172A" font-family="Arial, sans-serif" font-size="15" font-weight="700">Product</text>
+  <text x="474" y="412" fill="#0F172A" font-family="Arial, sans-serif" font-size="15" font-weight="700">Dimensions</text>
+  <text x="684" y="412" fill="#0F172A" font-family="Arial, sans-serif" font-size="15" font-weight="700">Materials</text>
+  <text x="840" y="412" fill="#0F172A" font-family="Arial, sans-serif" font-size="15" font-weight="700">Status</text>
+  <text x="278" y="468" fill="#475569" font-family="Arial, sans-serif" font-size="14">Starter kit display</text>
+  <text x="474" y="468" fill="#475569" font-family="Arial, sans-serif" font-size="14">18 x 12 x 8 in</text>
+  <text x="684" y="468" fill="#475569" font-family="Arial, sans-serif" font-size="14">Cardboard / PET</text>
+  <text x="840" y="468" fill="#16A34A" font-family="Arial, sans-serif" font-size="14">Approved</text>
+  <text x="278" y="526" fill="#475569" font-family="Arial, sans-serif" font-size="14">Endcap topper</text>
+  <text x="474" y="526" fill="#475569" font-family="Arial, sans-serif" font-size="14">24 x 14 x 4 in</text>
+  <text x="684" y="526" fill="#475569" font-family="Arial, sans-serif" font-size="14">Foamcore / vinyl</text>
+  <text x="840" y="526" fill="#16A34A" font-family="Arial, sans-serif" font-size="14">Approved</text>
+  <text x="278" y="584" fill="#475569" font-family="Arial, sans-serif" font-size="14">Shelf strip</text>
+  <text x="474" y="584" fill="#475569" font-family="Arial, sans-serif" font-size="14">36 x 2.5 in</text>
+  <text x="684" y="584" fill="#475569" font-family="Arial, sans-serif" font-size="14">Paper / matte coat</text>
+  <text x="840" y="584" fill="#16A34A" font-family="Arial, sans-serif" font-size="14">Approved</text>
+  <rect x="246" y="610" width="328" height="166" rx="18" fill="#F8FAFC"/>
+  <rect x="626" y="610" width="328" height="166" rx="18" fill="#F8FAFC"/>
+  <text x="278" y="650" fill="#0F172A" font-family="Arial, sans-serif" font-size="18" font-weight="700">Retail notes</text>
+  <rect x="278" y="674" width="238" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="278" y="700" width="214" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="278" y="726" width="228" height="12" rx="6" fill="#CBD5E1"/>
+  <text x="658" y="650" fill="#0F172A" font-family="Arial, sans-serif" font-size="18" font-weight="700">Distribution rules</text>
+  <rect x="658" y="674" width="238" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="658" y="700" width="208" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="658" y="726" width="224" height="12" rx="6" fill="#CBD5E1"/>
 </svg>

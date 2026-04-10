@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "The Asset Manager",
-  description: "Finder-style asset review workspace with public demo access.",
+  title: "Asset Harbor",
+  description: "Multi-cloud asset review workspace with Finder-style browsing and public demo access.",
 };
 
 export default function RootLayout({
