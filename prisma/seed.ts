@@ -10,7 +10,7 @@ async function main() {
     update: {},
     create: {
       username: 'Manouk',
-      password: '$2b$10$aw.ER7CJ5Qtkh77YCnBdIuvMDsyXMU53Qf7GIkozEyH6ZqW1AJFP2', // pass: 1011
+      password: '$2b$10$aw.ER7CJ5Qtkh77YCnBdIuvMDsyXMU53Qf7GIkozEyH6ZqW1AJFP2',
     },
   });
   await prisma.user.upsert({
@@ -18,7 +18,7 @@ async function main() {
     update: {},
     create: {
       username: 'Chuck',
-      password: '$2b$10$L6COPnooKZtKQGzY6sNZH.kNmhRrgCVTDIvJweBTRiHO8ybYyQmAe', // pass: 1234
+      password: '$2b$10$L6COPnooKZtKQGzY6sNZH.kNmhRrgCVTDIvJweBTRiHO8ybYyQmAe',
     },
   });
   await prisma.user.upsert({
@@ -26,18 +26,18 @@ async function main() {
     update: {},
     create: {
       username: 'Eric',
-      password: '$2b$10$VvhefE0xR5NeO7dqPrDkGO.g9sBXTcpSfwFIlS9G0pcci.kTsf442', // pass: 1234
+      password: '$2b$10$VvhefE0xR5NeO7dqPrDkGO.g9sBXTcpSfwFIlS9G0pcci.kTsf442',
     },
   });
   await prisma.user.upsert({
     where: { username: 'admin' },
     update: {
-      password: '$2b$10$JEO0m2O4Vhr083uLLgJpJOflPo/XjCsdrL1xDcM5uM0f5zWMeZoLO', // pass: admin123
+      password: '$2b$10$JEO0m2O4Vhr083uLLgJpJOflPo/XjCsdrL1xDcM5uM0f5zWMeZoLO',
       isAdmin: true,
     },
     create: {
       username: 'admin',
-      password: '$2b$10$JEO0m2O4Vhr083uLLgJpJOflPo/XjCsdrL1xDcM5uM0f5zWMeZoLO', // pass: admin123
+      password: '$2b$10$JEO0m2O4Vhr083uLLgJpJOflPo/XjCsdrL1xDcM5uM0f5zWMeZoLO',
       isAdmin: true,
     },
   });
