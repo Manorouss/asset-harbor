@@ -4,8 +4,8 @@ Asset Harbor is a multi-cloud review workspace for teams that need to browse sha
 
 ## Public Showcase
 
-- Live access page: [asset-harbor.vercel.app/login](https://asset-harbor.vercel.app/login)
-- Read-only demo: [asset-harbor.vercel.app/demo](https://asset-harbor.vercel.app/demo)
+- Live access page: [asset-harbor-manouks-projects.vercel.app/login](https://asset-harbor-manouks-projects.vercel.app/login)
+- Read-only demo: [asset-harbor-manouks-projects.vercel.app/demo](https://asset-harbor-manouks-projects.vercel.app/demo)
 - GitHub repository: [github.com/Manorouss/asset-harbor](https://github.com/Manorouss/asset-harbor)
 
 The public demo is intentionally temporary-only. Visitors can browse the workspace, expand folders, preview files, and play with comments and reactions without touching private cloud content or real credentials.
