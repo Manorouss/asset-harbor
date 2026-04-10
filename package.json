@@ -1,10 +1,11 @@
 {
-  "name": "asset-rating-app",
+  "name": "asset-harbor",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate && prisma db push && next build",
+    "build": "prisma generate && next build",
+    "db:push": "prisma db push",
     "start": "next start",
     "lint": "next lint"
   },

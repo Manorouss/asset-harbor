@@ -47,13 +47,57 @@ type DemoFilters = {
 const reactionEmojis = ['👍', '❤️', '😂', '😮', '👀'];
 const demoAppName = 'Asset Harbor';
 
-function collectFolderIds(nodes: DemoAsset[]): string[] {
-  return nodes.flatMap((node) => {
-    if (node.type !== 'folder') {
-      return [];
+type DemoRatingKey = 'positive' | 'neutral' | 'negative';
+type DemoReviews = { positive: number; neutral: number; negative: number };
+
+const emptyReviews: DemoReviews = { positive: 0, neutral: 0, negative: 0 };
+
+function flattenComments(comments: DemoComment[]): DemoComment[] {
+  return comments.flatMap((comment) => [comment, ...flattenComments(comment.replies ?? [])]);
+}
+
+function countComments(comments: DemoComment[]): number {
+  return comments.reduce((total, comment) => total + 1 + countComments(comment.replies ?? []), 0);
+}
+
+function updateCommentThread(
+  comments: DemoComment[],
+  targetId: number,
+  updater: (_comment: DemoComment) => DemoComment
+): DemoComment[] {
+  return comments.map((comment) => {
+    if (comment.id === targetId) {
+      return updater(comment);
     }
 
-    return [node.id, ...collectFolderIds(node.children ?? [])];
+    if (!comment.replies?.length) {
+      return comment;
+    }
+
+    return {
+      ...comment,
+      replies: updateCommentThread(comment.replies, targetId, updater),
+    };
+  });
+}
+
+function appendReplyToThread(comments: DemoComment[], parentId: number, reply: DemoComment): DemoComment[] {
+  return comments.map((comment) => {
+    if (comment.id === parentId) {
+      return {
+        ...comment,
+        replies: [...(comment.replies ?? []), reply],
+      };
+    }
+
+    if (!comment.replies?.length) {
+      return comment;
+    }
+
+    return {
+      ...comment,
+      replies: appendReplyToThread(comment.replies, parentId, reply),
+    };
   });
 }
 
@@ -208,17 +252,22 @@ function DemoTreeItem({
 
 export default function DemoPage() {
   const allAssets = useMemo(() => flattenDemoAssets(demoTree), []);
-  const initialExpandedIds = useMemo(() => collectFolderIds(demoTree), []);
-  const [selectedAsset, setSelectedAsset] = useState<DemoAsset | null>(
-    allAssets.find((asset) => asset.type === 'video') ?? allAssets[0] ?? null
-  );
-  const [expandedFolderIds, setExpandedFolderIds] = useState<Set<string>>(() => new Set(initialExpandedIds));
+  const [selectedAsset, setSelectedAsset] = useState<DemoAsset | null>(null);
+  const [expandedFolderIds, setExpandedFolderIds] = useState<Set<string>>(() => new Set());
   const [commentsByAsset, setCommentsByAsset] = useState<Record<string, DemoComment[]>>(() =>
     Object.fromEntries(allAssets.map((asset) => [asset.id, asset.comments ?? []]))
   );
+  const [reviewsByAsset, setReviewsByAsset] = useState<Record<string, DemoReviews>>(() =>
+    Object.fromEntries(allAssets.map((asset) => [asset.id, asset.reviews ?? emptyReviews]))
+  );
+  const [visitorRatingsByAsset, setVisitorRatingsByAsset] = useState<Record<string, DemoRatingKey | null>>({});
   const [newComment, setNewComment] = useState('');
   const [isSendingComment, setIsSendingComment] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [replyingToId, setReplyingToId] = useState<number | null>(null);
+  const [replyDrafts, setReplyDrafts] = useState<Record<number, string>>({});
+  const [detailsExpanded, setDetailsExpanded] = useState(true);
+  const [commentsExpanded, setCommentsExpanded] = useState(true);
   const [userFilter, setUserFilter] = useState('');
   const [filters, setFilters] = useState<DemoFilters>({
     name: '',
@@ -232,7 +281,7 @@ export default function DemoPage() {
   const userOptions = useMemo(() => {
     const usernames = new Set<string>();
     allAssets.forEach((asset) => {
-      (commentsByAsset[asset.id] ?? []).forEach((comment) => usernames.add(comment.author));
+      flattenComments(commentsByAsset[asset.id] ?? []).forEach((comment) => usernames.add(comment.author));
     });
     return [...usernames].sort();
   }, [allAssets, commentsByAsset]);
@@ -243,11 +292,12 @@ export default function DemoPage() {
       const matchesName = asset.name.toLowerCase().includes(filters.name.toLowerCase());
       const matchesType = filters.type === 'all' || asset.type === filters.type;
       const matchesSource = filters.source === 'all' || asset.source === filters.source;
-      const hasAnyRating =
-        !!asset.reviews && asset.reviews.positive + asset.reviews.neutral + asset.reviews.negative > 0;
-      const hasNegativeRating = !!asset.reviews && asset.reviews.negative > 0;
+      const assetReviews = reviewsByAsset[asset.id] ?? emptyReviews;
+      const flattenedComments = flattenComments(assetComments);
+      const hasAnyRating = assetReviews.positive + assetReviews.neutral + assetReviews.negative > 0;
+      const hasNegativeRating = assetReviews.negative > 0;
       const hasComments = assetComments.length > 0;
-      const matchesUser = !userFilter || assetComments.some((comment) => comment.author === userFilter);
+      const matchesUser = !userFilter || flattenedComments.some((comment) => comment.author === userFilter);
 
       if (!matchesName || !matchesType || !matchesSource || !matchesUser) {
         return false;
@@ -267,7 +317,7 @@ export default function DemoPage() {
 
       return true;
     });
-  }, [allAssets, commentsByAsset, filters, userFilter]);
+  }, [allAssets, commentsByAsset, filters, reviewsByAsset, userFilter]);
 
   const showFilteredList =
     !!filters.name ||
@@ -278,9 +328,11 @@ export default function DemoPage() {
     filters.hasNegativeRating ||
     filters.hasComments;
 
-  const ratings = selectedAsset?.reviews ?? { positive: 0, neutral: 0, negative: 0 };
+  const ratings = selectedAsset ? reviewsByAsset[selectedAsset.id] ?? emptyReviews : emptyReviews;
   const totalRatings = ratings.positive + ratings.neutral + ratings.negative;
   const currentComments = selectedAsset ? commentsByAsset[selectedAsset.id] ?? [] : [];
+  const totalCommentCount = countComments(currentComments);
+  const currentVisitorRating = selectedAsset ? visitorRatingsByAsset[selectedAsset.id] ?? null : null;
 
   const previewIcon =
     selectedAsset?.type === 'image' ? (
@@ -309,6 +361,38 @@ export default function DemoPage() {
     setNewComment((current) => `${current}${current ? ' ' : ''}${emoji}`);
   }
 
+  function handleAssetRating(nextRating: DemoRatingKey) {
+    if (!selectedAsset) {
+      return;
+    }
+
+    const assetId = selectedAsset.id;
+    const previousRating = visitorRatingsByAsset[assetId] ?? null;
+
+    setReviewsByAsset((current) => {
+      const currentReviews = current[assetId] ?? emptyReviews;
+      const nextReviews = { ...currentReviews };
+
+      if (previousRating) {
+        nextReviews[previousRating] = Math.max(0, nextReviews[previousRating] - 1);
+      }
+
+      if (previousRating !== nextRating) {
+        nextReviews[nextRating] += 1;
+      }
+
+      return {
+        ...current,
+        [assetId]: nextReviews,
+      };
+    });
+
+    setVisitorRatingsByAsset((current) => ({
+      ...current,
+      [assetId]: previousRating === nextRating ? null : nextRating,
+    }));
+  }
+
   async function handleCommentSubmit() {
     if (!selectedAsset || !newComment.trim() || isSendingComment) {
       return;
@@ -333,17 +417,39 @@ export default function DemoPage() {
     setIsSendingComment(false);
   }
 
+  async function handleReplySubmit(parentId: number) {
+    if (!selectedAsset) {
+      return;
+    }
+
+    const draft = replyDrafts[parentId]?.trim();
+    if (!draft) {
+      return;
+    }
+
+    const reply: DemoComment = {
+      id: Date.now(),
+      author: 'Demo Visitor',
+      content: draft,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      reactions: [],
+    };
+
+    setCommentsByAsset((current) => ({
+      ...current,
+      [selectedAsset.id]: appendReplyToThread(current[selectedAsset.id] ?? [], parentId, reply),
+    }));
+    setReplyDrafts((current) => ({ ...current, [parentId]: '' }));
+    setReplyingToId(null);
+  }
+
   function handleReaction(commentId: number, emoji: string) {
     if (!selectedAsset) {
       return;
     }
 
     setCommentsByAsset((current) => {
-      const updated = (current[selectedAsset.id] ?? []).map((comment) => {
-        if (comment.id !== commentId) {
-          return comment;
-        }
-
+      const updated = updateCommentThread(current[selectedAsset.id] ?? [], commentId, (comment) => {
         const existing = comment.reactions ?? [];
         const reactionIndex = existing.findIndex((reaction) => reaction.emoji === emoji);
 
@@ -383,12 +489,96 @@ export default function DemoPage() {
     });
   }
 
+  function renderComment(comment: DemoComment, depth = 0) {
+    const isReplying = replyingToId === comment.id;
+
+    return (
+      <div key={comment.id} className={cn('space-y-3', depth > 0 && 'ml-6 border-l border-gray-200 pl-4 dark:border-gray-800')}>
+        <div className="group flex items-start gap-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold dark:bg-gray-700">
+            {comment.author.charAt(0).toUpperCase()}
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold">{comment.author}</span>
+              <span className="text-xs text-gray-500">{comment.time}</span>
+              {comment.anchor ? (
+                <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                  {comment.anchor}
+                </span>
+              ) : null}
+            </div>
+            <div className="mt-1 text-sm text-gray-700 dark:text-gray-200">
+              {comment.content}
+            </div>
+            {comment.reactions?.length ? (
+              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                {comment.reactions.map((reaction) => (
+                  <button
+                    key={`${comment.id}-${reaction.emoji}`}
+                    type="button"
+                    onClick={() => handleReaction(comment.id, reaction.emoji)}
+                    className="flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1 text-xs transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                  >
+                    <span>{reaction.emoji}</span>
+                    <span>{reaction.users.length}</span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            <div className="mt-2 flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setReplyingToId((current) => (current === comment.id ? null : comment.id))}
+                className="rounded-full px-2 py-1 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+              >
+                Reply
+              </button>
+              <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                {reactionEmojis.map((emoji) => (
+                  <button
+                    key={`${comment.id}-${emoji}-action`}
+                    type="button"
+                    onClick={() => handleReaction(comment.id, emoji)}
+                    className="rounded-full px-1.5 py-1 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {isReplying ? (
+              <div className="mt-3 flex items-start gap-2">
+                <Textarea
+                  placeholder={`Reply to ${comment.author}...`}
+                  value={replyDrafts[comment.id] ?? ''}
+                  onChange={(event) =>
+                    setReplyDrafts((current) => ({ ...current, [comment.id]: event.target.value }))
+                  }
+                  className="min-h-[72px] resize-none bg-gray-100 text-sm dark:bg-gray-800"
+                />
+                <Button type="button" size="icon" onClick={() => handleReplySubmit(comment.id)}>
+                  <SendHorizontal className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : null}
+          </div>
+        </div>
+        {comment.replies?.length ? (
+          <div className="space-y-3">
+            {comment.replies.map((reply) => renderComment(reply, depth + 1))}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
   return (
     <main className={darkMode ? 'dark' : ''}>
       <div className="h-screen w-screen overflow-hidden bg-gray-50 text-black dark:bg-black dark:text-white">
         <header className="flex h-14 items-center gap-4 border-b bg-white px-6 dark:bg-gray-950">
           <h1 className="text-lg font-semibold">
-            <b>{demoAppName}</b> <span>(Demo)</span> - <i>Concept Manufacturing</i>
+            <b>{demoAppName}</b> <span>(Demo)</span>
           </h1>
           <button
             className="ml-4 rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-800"
@@ -542,17 +732,48 @@ export default function DemoPage() {
           <ResizablePanel defaultSize={50} minSize={30}>
             <div className="flex h-full items-center justify-center bg-gray-100 dark:bg-gray-900">
               {!selectedAsset ? (
-                <div className="text-gray-500">{previewIcon}</div>
+                <div className="max-w-md text-center text-gray-500">
+                  <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-white shadow-sm dark:bg-gray-950">
+                    {previewIcon}
+                  </div>
+                  <p className="mt-5 text-lg font-medium text-gray-700 dark:text-gray-200">Choose a file to preview</p>
+                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    The cloud roots now open collapsed so visitors can test the Finder-style tree from a clean state.
+                  </p>
+                </div>
               ) : selectedAsset.preview ? (
                 <div className="flex h-full w-full items-center justify-center p-6">
-                  <div className="w-full max-w-5xl overflow-hidden rounded-lg border bg-white shadow-sm dark:border-gray-800 dark:bg-gray-950">
-                    <Image
-                      src={selectedAsset.preview}
-                      alt={selectedAsset.name}
-                      width={1200}
-                      height={900}
-                      className="h-auto w-full object-contain"
-                    />
+                  <div className="w-full max-w-5xl overflow-hidden rounded-[24px] border border-gray-200 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.10)] dark:border-gray-800 dark:bg-gray-950">
+                    <div className="flex items-start justify-between gap-4 border-b border-gray-200 bg-[#F7F4EE] px-5 py-4 dark:border-gray-800 dark:bg-gray-900">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">{selectedAsset.name}</p>
+                        <p className="mt-1 truncate text-xs text-gray-500 dark:text-gray-400">
+                          {selectedAsset.sourcePath ?? selectedAsset.description}
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 flex-wrap items-center gap-2 text-[11px]">
+                        {selectedAsset.source ? <CloudPill source={selectedAsset.source} /> : null}
+                        {selectedAsset.version ? (
+                          <span className="rounded-full border border-gray-200 bg-white px-2 py-0.5 font-medium text-gray-600 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-300">
+                            {selectedAsset.version}
+                          </span>
+                        ) : null}
+                        {selectedAsset.status ? (
+                          <span className="rounded-full border border-gray-200 bg-white px-2 py-0.5 font-medium text-gray-600 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-300">
+                            {selectedAsset.status}
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className="bg-[#ECE7DF] p-5 dark:bg-black">
+                      <Image
+                        src={selectedAsset.preview}
+                        alt={selectedAsset.name}
+                        width={1200}
+                        height={900}
+                        className="h-auto w-full rounded-[18px] border border-black/5 bg-white object-contain"
+                      />
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -591,139 +812,156 @@ export default function DemoPage() {
                     </div>
                   </div>
 
-                  <div className="shrink-0 space-y-4 border-b p-4">
-                    <div>
-                      <h4 className="mb-2 text-sm font-medium">Source</h4>
-                      <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                        <div className="flex items-center justify-between gap-3">
-                          <span>Cloud</span>
-                          <span>{selectedAsset.source ? <CloudPill source={selectedAsset.source} /> : '-'}</span>
-                        </div>
-                        <div className="flex items-center justify-between gap-3">
-                          <span>Synced</span>
-                          <span>{selectedAsset.syncedAt ?? '-'}</span>
-                        </div>
-                        <div className="flex items-center justify-between gap-3">
-                          <span>Version</span>
-                          <span>{selectedAsset.version ?? '-'}</span>
-                        </div>
-                      </div>
-                      {selectedAsset.sourcePath ? (
-                        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{selectedAsset.sourcePath}</p>
-                      ) : null}
-                    </div>
-
-                    <div>
-                      <h4 className="mb-2 text-sm font-medium">All Ratings ({totalRatings})</h4>
-                      <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                        <div className="flex items-center justify-between">
-                          <span>Positive</span>
-                          <span>{ratings.positive}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span>Neutral</span>
-                          <span>{ratings.neutral}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span>Negative</span>
-                          <span>{ratings.negative}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {selectedAsset.activity?.[0] ? (
-                      <div className="rounded-md bg-gray-50 p-3 text-xs text-gray-600 dark:bg-gray-900 dark:text-gray-300">
-                        <div className="flex items-center gap-2">
-                          <RefreshCw className="h-3.5 w-3.5" />
-                          <span>{selectedAsset.activity[0].author}</span>
-                        </div>
-                        <p className="mt-2">{selectedAsset.activity[0].detail}</p>
-                      </div>
-                    ) : null}
-                  </div>
-
-                  <div className="min-h-0 flex-1">
-                    <h3 className="shrink-0 border-b p-4 font-semibold">Comments ({currentComments.length})</h3>
-                    <ScrollArea className="h-[calc(100%-11rem)]">
-                      <div className="space-y-4 p-4">
-                        {currentComments.map((comment) => (
-                          <div key={comment.id} className="group flex items-start gap-3">
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold dark:bg-gray-700">
-                              {comment.author.charAt(0).toUpperCase()}
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-semibold">{comment.author}</span>
-                                <span className="text-xs text-gray-500">{comment.time}</span>
-                                {comment.anchor ? (
-                                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
-                                    {comment.anchor}
-                                  </span>
-                                ) : null}
-                              </div>
-                              <div className="mt-1 text-sm text-gray-700 dark:text-gray-200">
-                                {comment.content}
-                              </div>
-                              {comment.reactions?.length ? (
-                                <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                                  {comment.reactions.map((reaction) => (
-                                    <button
-                                      key={`${comment.id}-${reaction.emoji}`}
-                                      type="button"
-                                      onClick={() => handleReaction(comment.id, reaction.emoji)}
-                                      className="flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1 text-xs transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
-                                    >
-                                      <span>{reaction.emoji}</span>
-                                      <span>{reaction.users.length}</span>
-                                    </button>
-                                  ))}
-                                </div>
-                              ) : null}
-                              <div className="mt-2 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                                {reactionEmojis.map((emoji) => (
+                  <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                    <div className="shrink-0 border-b">
+                      <button
+                        type="button"
+                        onClick={() => setDetailsExpanded((current) => !current)}
+                        className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-900"
+                      >
+                        <span className="text-sm font-semibold">File Info & Review</span>
+                        {detailsExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                      </button>
+                      {detailsExpanded ? (
+                        <ScrollArea className="max-h-[38vh] border-t">
+                          <div className="space-y-4 p-4">
+                            <div>
+                              <h4 className="mb-2 text-sm font-medium">Your Review</h4>
+                              <div className="flex flex-wrap items-center gap-2">
+                                {[
+                                  { key: 'positive' as const, emoji: '👍', label: 'Positive' },
+                                  { key: 'neutral' as const, emoji: '😐', label: 'Neutral' },
+                                  { key: 'negative' as const, emoji: '👎', label: 'Needs work' },
+                                ].map((option) => (
                                   <button
-                                    key={`${comment.id}-${emoji}-action`}
+                                    key={option.key}
                                     type="button"
-                                    onClick={() => handleReaction(comment.id, emoji)}
-                                    className="rounded-full px-1.5 py-1 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                                    onClick={() => handleAssetRating(option.key)}
+                                    className={cn(
+                                      'flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition-colors',
+                                      currentVisitorRating === option.key
+                                        ? 'border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-950/40 dark:text-blue-200'
+                                        : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-gray-900'
+                                    )}
                                   >
-                                    {emoji}
+                                    <span className="text-base">{option.emoji}</span>
+                                    <span>{option.label}</span>
                                   </button>
                                 ))}
                               </div>
                             </div>
+
+                            <div>
+                              <h4 className="mb-2 text-sm font-medium">Source</h4>
+                              <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                                <div className="flex items-center justify-between gap-3">
+                                  <span>Cloud</span>
+                                  <span>{selectedAsset.source ? <CloudPill source={selectedAsset.source} /> : '-'}</span>
+                                </div>
+                                <div className="flex items-center justify-between gap-3">
+                                  <span>Synced</span>
+                                  <span>{selectedAsset.syncedAt ?? '-'}</span>
+                                </div>
+                                <div className="flex items-center justify-between gap-3">
+                                  <span>Version</span>
+                                  <span>{selectedAsset.version ?? '-'}</span>
+                                </div>
+                              </div>
+                              {selectedAsset.sourcePath ? (
+                                <p className="mt-2 break-words text-xs text-gray-500 dark:text-gray-400">{selectedAsset.sourcePath}</p>
+                              ) : null}
+                            </div>
+
+                            <div>
+                              <h4 className="mb-2 text-sm font-medium">All Ratings ({totalRatings})</h4>
+                              <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                                <div className="flex items-center justify-between">
+                                  <span>Positive</span>
+                                  <span>{ratings.positive}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span>Neutral</span>
+                                  <span>{ratings.neutral}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span>Negative</span>
+                                  <span>{ratings.negative}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {selectedAsset.activity?.[0] ? (
+                              <div className="rounded-md bg-gray-50 p-3 text-xs text-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                                <div className="flex items-center gap-2">
+                                  <RefreshCw className="h-3.5 w-3.5" />
+                                  <span>{selectedAsset.activity[0].author}</span>
+                                </div>
+                                <p className="mt-2">{selectedAsset.activity[0].detail}</p>
+                              </div>
+                            ) : null}
                           </div>
-                        ))}
-                      </div>
-                    </ScrollArea>
-                    <div className="shrink-0 space-y-3 border-t bg-white p-4 dark:bg-gray-950">
-                      <div className="flex items-center gap-1">
-                        {['😊', '😐', '😞', '👍', '🔥'].map((emoji) => (
-                          <button
-                            key={emoji}
-                            type="button"
-                            onClick={() => addEmojiToComposer(emoji)}
-                            className="rounded-full px-2 py-1 text-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
-                          >
-                            {emoji}
-                          </button>
-                        ))}
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Textarea
-                          placeholder="Type your comment..."
-                          value={newComment}
-                          onChange={(event) => setNewComment(event.target.value)}
-                          className="min-h-[76px] resize-none bg-gray-100 dark:bg-gray-800"
-                        />
-                        <Button type="button" onClick={handleCommentSubmit} disabled={isSendingComment} size="icon">
-                          {isSendingComment ? (
-                            <LoaderCircle className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <SendHorizontal className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </div>
+                        </ScrollArea>
+                      ) : null}
+                    </div>
+
+                    <div className="flex min-h-0 flex-1 flex-col">
+                      <button
+                        type="button"
+                        onClick={() => setCommentsExpanded((current) => !current)}
+                        className="flex w-full items-center justify-between border-b px-4 py-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-900"
+                      >
+                        <span className="text-sm font-semibold">Comments ({totalCommentCount})</span>
+                        {commentsExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                      </button>
+
+                      {commentsExpanded ? (
+                        <div className="flex min-h-0 flex-1 flex-col">
+                          <ScrollArea className="min-h-0 flex-1">
+                            <div className="space-y-4 p-4">
+                              {currentComments.length > 0 ? (
+                                currentComments.map((comment) => renderComment(comment))
+                              ) : (
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  No comments yet. Add one to test the thread.
+                                </p>
+                              )}
+                            </div>
+                          </ScrollArea>
+                          <div className="shrink-0 space-y-3 border-t bg-white p-4 dark:bg-gray-950">
+                            <div className="flex items-center gap-1">
+                              {['😊', '😐', '😞', '👍', '🔥'].map((emoji) => (
+                                <button
+                                  key={emoji}
+                                  type="button"
+                                  onClick={() => addEmojiToComposer(emoji)}
+                                  className="rounded-full px-2 py-1 text-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                                >
+                                  {emoji}
+                                </button>
+                              ))}
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <Textarea
+                                placeholder="Type your comment..."
+                                value={newComment}
+                                onChange={(event) => setNewComment(event.target.value)}
+                                className="min-h-[84px] resize-none bg-gray-100 dark:bg-gray-800"
+                              />
+                              <Button type="button" onClick={handleCommentSubmit} disabled={isSendingComment} size="icon">
+                                {isSendingComment ? (
+                                  <LoaderCircle className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <SendHorizontal className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-4 text-sm text-gray-500 dark:text-gray-400">
+                          Expand comments to read or add feedback.
+                        </div>
+                      )}
                     </div>
                   </div>
                 </>

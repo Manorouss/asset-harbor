@@ -4,9 +4,9 @@ Asset Harbor is a multi-cloud review workspace for teams that need to browse sha
 
 ## Public Showcase
 
-- Live access page: [asset-rating-app.vercel.app/login](https://asset-rating-app.vercel.app/login)
-- Read-only demo: [asset-rating-app.vercel.app/demo](https://asset-rating-app.vercel.app/demo)
-- GitHub repository: [github.com/Manorouss/asset-rating-app](https://github.com/Manorouss/asset-rating-app)
+- Live access page: [asset-harbor.vercel.app/login](https://asset-harbor.vercel.app/login)
+- Read-only demo: [asset-harbor.vercel.app/demo](https://asset-harbor.vercel.app/demo)
+- GitHub repository: [github.com/Manorouss/asset-harbor](https://github.com/Manorouss/asset-harbor)
 
 The public demo is intentionally temporary-only. Visitors can browse the workspace, expand folders, preview files, and play with comments and reactions without touching private cloud content or real credentials.
 
@@ -22,6 +22,7 @@ The public demo is intentionally temporary-only. Visitors can browse the workspa
 
 ```bash
 npm install
+npm run db:push
 npm run dev
 ```
 
@@ -44,7 +45,13 @@ The `/demo` route does not require cloud access.
 The production build runs:
 
 ```bash
-prisma generate && prisma db push && next build
+prisma generate && next build
+```
+
+Apply schema changes separately before deployment:
+
+```bash
+npm run db:push
 ```
 
 For Vercel, make sure the database and Dropbox environment variables are configured in the project settings before promoting the deployment.

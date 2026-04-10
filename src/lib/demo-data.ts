@@ -13,6 +13,7 @@ export type DemoComment = {
   anchor?: string;
   markerPercent?: number;
   reactions?: DemoReaction[];
+  replies?: DemoComment[];
 };
 
 export type DemoReview = {
@@ -61,28 +62,28 @@ export const demoCloudConnections: DemoCloudConnection[] = [
   {
     id: 'dropbox',
     name: 'Dropbox',
-    account: 'Concept Manufacturing / Creative',
+    account: 'Asset Harbor / Creative',
     status: 'Connected',
     syncedToday: 8,
   },
   {
     id: 'google-drive',
     name: 'Google Drive',
-    account: 'Concept Manufacturing / GTM',
+    account: 'Asset Harbor / GTM',
     status: 'Connected',
     syncedToday: 6,
   },
   {
     id: 'onedrive',
     name: 'OneDrive',
-    account: 'Concept Manufacturing / Retail Ops',
+    account: 'Asset Harbor / Retail Ops',
     status: 'Syncing',
     syncedToday: 5,
   },
   {
     id: 'icloud-drive',
     name: 'iCloud Drive',
-    account: 'Concept Manufacturing / Leadership',
+    account: 'Asset Harbor / Leadership',
     status: 'Connected',
     syncedToday: 3,
   },
@@ -141,6 +142,15 @@ export const demoTree: DemoAsset[] = [
                     markerPercent: 28,
                     content: 'The multi-cloud story is working. Hold the Google Drive card on screen a little longer.',
                     reactions: [{ emoji: '❤️', users: ['Nadia', 'Manouk'] }],
+                    replies: [
+                      {
+                        id: 201,
+                        author: 'Nadia',
+                        time: '09:31',
+                        content: 'Agreed. The transition is clean, it just cuts away too quickly for a first-time viewer.',
+                        reactions: [{ emoji: '👍', users: ['Eric'] }],
+                      },
+                    ],
                   },
                   {
                     id: 3,
@@ -279,6 +289,15 @@ export const demoTree: DemoAsset[] = [
                     time: '11:02',
                     content: 'This is the clearest overview of the cross-cloud workflow. Keep it pinned in the demo.',
                     reactions: [{ emoji: '🔥', users: ['Manouk'] }],
+                    replies: [
+                      {
+                        id: 202,
+                        author: 'Manouk',
+                        time: '11:08',
+                        content: 'Yes. This should probably be the image people land on after the teaser.',
+                        reactions: [{ emoji: '👍', users: ['Chuck'] }],
+                      },
+                    ],
                   },
                   {
                     id: 7,

@@ -61,7 +61,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-6 rounded-lg bg-white p-8 shadow-md dark:bg-gray-800">
         <div className="space-y-2 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gray-500 dark:text-gray-400">
-            Concept Manufacturing
+            Multi-cloud review workspace
           </p>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Asset Harbor</h1>
           <p className="text-sm text-gray-600 dark:text-gray-400">
