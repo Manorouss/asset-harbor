@@ -684,9 +684,9 @@ export default function DemoPage() {
           </div>
         </div>
 
-        <ResizablePanelGroup direction="horizontal" className="h-[calc(100vh-7rem)]">
+        <ResizablePanelGroup direction="horizontal" className="h-[calc(100vh-7rem)] min-h-0">
           <ResizablePanel defaultSize={25} minSize={18} maxSize={40}>
-            <div className="flex h-full flex-col">
+            <div className="flex h-full min-h-0 flex-col">
               <h2 className="border-b p-4 text-lg font-semibold">Assets</h2>
               <ScrollArea className="flex-1 p-2">
                 {showFilteredList ? (
@@ -730,7 +730,7 @@ export default function DemoPage() {
           <ResizableHandle withHandle />
 
           <ResizablePanel defaultSize={50} minSize={30}>
-            <div className="flex h-full items-center justify-center bg-gray-100 dark:bg-gray-900">
+            <div className="flex h-full min-h-0 items-center justify-center bg-gray-100 dark:bg-gray-900">
               {!selectedAsset ? (
                 <div className="max-w-md text-center text-gray-500">
                   <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-white shadow-sm dark:bg-gray-950">
@@ -788,7 +788,7 @@ export default function DemoPage() {
           <ResizableHandle withHandle />
 
           <ResizablePanel defaultSize={25} minSize={18} maxSize={40}>
-            <div className="flex h-full flex-col">
+            <div className="flex h-full min-h-0 flex-col overflow-hidden">
               {!selectedAsset ? (
                 <div className="flex h-full flex-col items-center justify-center text-gray-500">
                   <MessageSquare className="h-16 w-16 opacity-30" />
@@ -796,16 +796,18 @@ export default function DemoPage() {
                 </div>
               ) : (
                 <>
-                  <div className="shrink-0 border-b p-4">
+                  <div className="shrink-0 border-b px-4 py-4">
                     <div className="flex items-start justify-between gap-3">
-                      <div>
+                      <div className="min-w-0">
                         <h3 className="truncate text-lg font-semibold" title={selectedAsset.name}>
                           {selectedAsset.name}
                         </h3>
-                        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{selectedAsset.description}</p>
+                        <p className="mt-1 line-clamp-3 text-sm text-gray-500 dark:text-gray-400">
+                          {selectedAsset.description}
+                        </p>
                       </div>
                       {selectedAsset.status ? (
-                        <span className="rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[10px] font-medium text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                        <span className="shrink-0 rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[10px] font-medium text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
                           {selectedAsset.status}
                         </span>
                       ) : null}
@@ -823,10 +825,12 @@ export default function DemoPage() {
                         {detailsExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       </button>
                       {detailsExpanded ? (
-                        <ScrollArea className="max-h-[38vh] border-t">
-                          <div className="space-y-4 p-4">
-                            <div>
-                              <h4 className="mb-2 text-sm font-medium">Your Review</h4>
+                        <div className="border-t bg-gray-50/60 px-4 py-4 dark:bg-gray-950/60">
+                          <div className="space-y-4">
+                            <div className="rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-950">
+                              <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
+                                Your Review
+                              </h4>
                               <div className="flex flex-wrap items-center gap-2">
                                 {[
                                   { key: 'positive' as const, emoji: '👍', label: 'Positive' },
@@ -838,7 +842,7 @@ export default function DemoPage() {
                                     type="button"
                                     onClick={() => handleAssetRating(option.key)}
                                     className={cn(
-                                      'flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition-colors',
+                                      'flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors',
                                       currentVisitorRating === option.key
                                         ? 'border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-950/40 dark:text-blue-200'
                                         : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-gray-900'
@@ -851,29 +855,38 @@ export default function DemoPage() {
                               </div>
                             </div>
 
-                            <div>
-                              <h4 className="mb-2 text-sm font-medium">Source</h4>
-                              <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                            <div className="rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-950">
+                              <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
+                                File Info
+                              </h4>
+                              <div className="grid gap-2 text-sm text-gray-600 dark:text-gray-300">
                                 <div className="flex items-center justify-between gap-3">
                                   <span>Cloud</span>
                                   <span>{selectedAsset.source ? <CloudPill source={selectedAsset.source} /> : '-'}</span>
                                 </div>
                                 <div className="flex items-center justify-between gap-3">
                                   <span>Synced</span>
-                                  <span>{selectedAsset.syncedAt ?? '-'}</span>
+                                  <span className="text-right">{selectedAsset.syncedAt ?? '-'}</span>
                                 </div>
                                 <div className="flex items-center justify-between gap-3">
                                   <span>Version</span>
-                                  <span>{selectedAsset.version ?? '-'}</span>
+                                  <span className="text-right">{selectedAsset.version ?? '-'}</span>
                                 </div>
                               </div>
                               {selectedAsset.sourcePath ? (
-                                <p className="mt-2 break-words text-xs text-gray-500 dark:text-gray-400">{selectedAsset.sourcePath}</p>
+                                <p className="mt-3 break-words rounded-lg bg-gray-50 px-2.5 py-2 text-[11px] text-gray-500 dark:bg-gray-900 dark:text-gray-400">
+                                  {selectedAsset.sourcePath}
+                                </p>
                               ) : null}
                             </div>
 
-                            <div>
-                              <h4 className="mb-2 text-sm font-medium">All Ratings ({totalRatings})</h4>
+                            <div className="rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-950">
+                              <div className="mb-3 flex items-center justify-between gap-3">
+                                <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
+                                  All Ratings
+                                </h4>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">{totalRatings} total</span>
+                              </div>
                               <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                                 <div className="flex items-center justify-between">
                                   <span>Positive</span>
@@ -891,7 +904,7 @@ export default function DemoPage() {
                             </div>
 
                             {selectedAsset.activity?.[0] ? (
-                              <div className="rounded-md bg-gray-50 p-3 text-xs text-gray-600 dark:bg-gray-900 dark:text-gray-300">
+                              <div className="rounded-xl border border-gray-200 bg-white p-3 text-xs text-gray-600 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300">
                                 <div className="flex items-center gap-2">
                                   <RefreshCw className="h-3.5 w-3.5" />
                                   <span>{selectedAsset.activity[0].author}</span>
@@ -900,11 +913,11 @@ export default function DemoPage() {
                               </div>
                             ) : null}
                           </div>
-                        </ScrollArea>
+                        </div>
                       ) : null}
                     </div>
 
-                    <div className="flex min-h-0 flex-1 flex-col">
+                    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
                       <button
                         type="button"
                         onClick={() => setCommentsExpanded((current) => !current)}
@@ -915,7 +928,7 @@ export default function DemoPage() {
                       </button>
 
                       {commentsExpanded ? (
-                        <div className="flex min-h-0 flex-1 flex-col">
+                        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
                           <ScrollArea className="min-h-0 flex-1">
                             <div className="space-y-4 p-4">
                               {currentComments.length > 0 ? (
