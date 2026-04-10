@@ -2,14 +2,16 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ChevronDown,
   ChevronRight,
   File,
+  FileText,
   Folder,
   Image as ImageIcon,
+  Info,
   LoaderCircle,
   LogIn,
   MessageSquare,
@@ -37,15 +39,49 @@ import { cn } from '@/lib/utils';
 
 type DemoFilters = {
   name: string;
-  type: 'all' | 'image' | 'video' | 'pdf';
+  type: 'all' | 'image' | 'video' | 'pdf' | 'doc' | 'ppt';
   source: 'all' | DemoCloud;
   hasNegativeRating: boolean;
   hasComments: boolean;
   hasAnyRating: boolean;
 };
 
+type TourStep = {
+  id: 'filters' | 'tree' | 'preview' | 'details' | 'comments';
+  title: string;
+  body: string;
+};
+
 const reactionEmojis = ['👍', '❤️', '😂', '😮', '👀'];
 const demoAppName = 'Asset Harbor';
+const tourStorageKey = 'asset-harbor-demo-tour-dismissed';
+const tourSteps: TourStep[] = [
+  {
+    id: 'filters',
+    title: 'Filter the queue',
+    body: 'Use the top bar to narrow assets by name, file type, cloud, reviewer, or review state before you open anything.',
+  },
+  {
+    id: 'tree',
+    title: 'Browse by cloud folder',
+    body: 'Each cloud starts collapsed. Open folders the same way you would in Finder to move through the synced asset tree.',
+  },
+  {
+    id: 'preview',
+    title: 'Preview the original file',
+    body: 'Images, video, and PDFs preview directly in the center pane. Native Office files stay downloadable so the demo still reflects real source files.',
+  },
+  {
+    id: 'details',
+    title: 'Check file status fast',
+    body: 'The right rail gives you source, version, sync time, ratings, and activity without opening a separate inspector.',
+  },
+  {
+    id: 'comments',
+    title: 'Leave threaded feedback',
+    body: 'Use the comments section for reactions, replies, and new top-level notes. This is the main collaboration flow in the demo.',
+  },
+];
 
 type DemoRatingKey = 'positive' | 'neutral' | 'negative';
 type DemoReviews = { positive: number; neutral: number; negative: number };
@@ -152,7 +188,20 @@ function AssetTypeIcon({ type }: { type: DemoAsset['type'] }) {
     return <Video className="h-4 w-4 text-gray-400" />;
   }
 
+  if (type === 'pdf' || type === 'doc' || type === 'ppt') {
+    return <FileText className="h-4 w-4 text-gray-400" />;
+  }
+
   return <File className="h-4 w-4 text-gray-400" />;
+}
+
+function getFileExtension(type: DemoAsset['type']) {
+  if (type === 'video') return 'MP4';
+  if (type === 'image') return 'JPG';
+  if (type === 'pdf') return 'PDF';
+  if (type === 'doc') return 'DOCX';
+  if (type === 'ppt') return 'PPTX';
+  return 'FILE';
 }
 
 function CloudPill({ source }: { source: DemoCloud }) {
@@ -268,6 +317,9 @@ export default function DemoPage() {
   const [replyDrafts, setReplyDrafts] = useState<Record<number, string>>({});
   const [detailsExpanded, setDetailsExpanded] = useState(false);
   const [commentsExpanded, setCommentsExpanded] = useState(true);
+  const [tourOpen, setTourOpen] = useState(false);
+  const [tourStarted, setTourStarted] = useState(false);
+  const [tourStepIndex, setTourStepIndex] = useState(0);
   const [userFilter, setUserFilter] = useState('');
   const [filters, setFilters] = useState<DemoFilters>({
     name: '',
@@ -333,15 +385,54 @@ export default function DemoPage() {
   const currentComments = selectedAsset ? commentsByAsset[selectedAsset.id] ?? [] : [];
   const totalCommentCount = countComments(currentComments);
   const currentVisitorRating = selectedAsset ? visitorRatingsByAsset[selectedAsset.id] ?? null : null;
+  const isTourActive = tourOpen && tourStarted;
+  const currentTourStep = isTourActive ? tourSteps[tourStepIndex] : null;
 
   const previewIcon =
     selectedAsset?.type === 'image' ? (
       <ImageIcon className="h-16 w-16 text-gray-300" />
     ) : selectedAsset?.type === 'video' ? (
       <Video className="h-16 w-16 text-gray-300" />
+    ) : selectedAsset?.type === 'pdf' || selectedAsset?.type === 'doc' || selectedAsset?.type === 'ppt' ? (
+      <FileText className="h-16 w-16 text-gray-300" />
     ) : (
       <File className="h-16 w-16 text-gray-300" />
     );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (!window.localStorage.getItem(tourStorageKey)) {
+      setTourOpen(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isTourActive) {
+      return;
+    }
+
+    if (!selectedAsset && allAssets[0]) {
+      setSelectedAsset(allAssets[0]);
+    }
+
+    if (currentTourStep?.id === 'details') {
+      setDetailsExpanded(true);
+      setCommentsExpanded(false);
+      return;
+    }
+
+    if (currentTourStep?.id === 'comments') {
+      setDetailsExpanded(false);
+      setCommentsExpanded(true);
+      return;
+    }
+
+    setDetailsExpanded(false);
+    setCommentsExpanded(true);
+  }, [allAssets, currentTourStep, isTourActive, selectedAsset]);
 
   function toggleFolder(folderId: string) {
     setExpandedFolderIds((current) => {
@@ -419,6 +510,44 @@ export default function DemoPage() {
     }));
     setNewComment('');
     setIsSendingComment(false);
+  }
+
+  function dismissTour() {
+    setTourOpen(false);
+    setTourStarted(false);
+    setTourStepIndex(0);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(tourStorageKey, '1');
+    }
+  }
+
+  function openTour() {
+    setTourOpen(true);
+    setTourStarted(false);
+    setTourStepIndex(0);
+  }
+
+  function startTour() {
+    if (!selectedAsset && allAssets[0]) {
+      handleSelectAsset(allAssets[0]);
+    }
+
+    setTourOpen(true);
+    setTourStarted(true);
+    setTourStepIndex(0);
+  }
+
+  function advanceTour() {
+    if (tourStepIndex === tourSteps.length - 1) {
+      dismissTour();
+      return;
+    }
+
+    setTourStepIndex((current) => current + 1);
+  }
+
+  function rewindTour() {
+    setTourStepIndex((current) => Math.max(0, current - 1));
   }
 
   async function handleReplySubmit(parentId: number) {
@@ -592,6 +721,10 @@ export default function DemoPage() {
           >
             {darkMode ? <Sun className="h-5 w-5 text-yellow-400" /> : <Moon className="h-5 w-5 text-gray-700" />}
           </button>
+          <Button type="button" variant="outline" size="sm" className="ml-2 gap-2" onClick={openTour}>
+            <Info className="h-4 w-4" />
+            Take Tour
+          </Button>
           <div className="ml-auto flex items-center gap-4">
             <span className="text-sm text-gray-500 dark:text-gray-400">4 clouds connected</span>
             <span className="text-sm text-gray-500 dark:text-gray-400">Welcome, Demo Visitor</span>
@@ -604,7 +737,12 @@ export default function DemoPage() {
           </div>
         </header>
 
-        <div className="flex items-center gap-4 border-b bg-white p-3 dark:bg-gray-950">
+        <div
+          className={cn(
+            'flex items-center gap-4 border-b bg-white p-3 transition-all dark:bg-gray-950',
+            currentTourStep?.id === 'filters' && 'relative z-20 ring-2 ring-blue-400 ring-inset'
+          )}
+        >
           <Input
             placeholder="Filter by name..."
             className="max-w-xs"
@@ -625,6 +763,8 @@ export default function DemoPage() {
                 <SelectItem value="image">Image</SelectItem>
                 <SelectItem value="video">Video</SelectItem>
                 <SelectItem value="pdf">PDF</SelectItem>
+                <SelectItem value="doc">Word</SelectItem>
+                <SelectItem value="ppt">Slides</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -690,7 +830,12 @@ export default function DemoPage() {
 
         <ResizablePanelGroup direction="horizontal" className="h-[calc(100vh-7rem)] min-h-0">
           <ResizablePanel defaultSize={25} minSize={18} maxSize={40}>
-            <div className="flex h-full min-h-0 flex-col">
+            <div
+              className={cn(
+                'flex h-full min-h-0 flex-col transition-all',
+                currentTourStep?.id === 'tree' && 'relative z-20 ring-2 ring-blue-400 ring-inset'
+              )}
+            >
               <h2 className="border-b p-4 text-lg font-semibold">Assets</h2>
               <ScrollArea className="flex-1 p-2">
                 {showFilteredList ? (
@@ -734,7 +879,12 @@ export default function DemoPage() {
           <ResizableHandle withHandle />
 
           <ResizablePanel defaultSize={50} minSize={30}>
-            <div className="flex h-full min-h-0 items-center justify-center bg-gray-100 dark:bg-gray-900">
+            <div
+              className={cn(
+                'flex h-full min-h-0 items-center justify-center bg-gray-100 transition-all dark:bg-gray-900',
+                currentTourStep?.id === 'preview' && 'relative z-20 ring-2 ring-blue-400 ring-inset'
+              )}
+            >
               {!selectedAsset ? (
                 <div className="max-w-md text-center text-gray-500">
                   <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-white shadow-sm dark:bg-gray-950">
@@ -770,13 +920,66 @@ export default function DemoPage() {
                       </div>
                     </div>
                     <div className="bg-[#ECE7DF] p-5 dark:bg-black">
-                      <Image
-                        src={selectedAsset.preview}
-                        alt={selectedAsset.name}
-                        width={1200}
-                        height={900}
-                        className="h-auto w-full rounded-[18px] border border-black/5 bg-white object-contain"
-                      />
+                      {selectedAsset.type === 'image' ? (
+                        <div className="flex min-h-[420px] items-center justify-center rounded-[18px] border border-black/5 bg-white p-6">
+                          <Image
+                            src={selectedAsset.preview}
+                            alt={selectedAsset.name}
+                            width={1400}
+                            height={900}
+                            className="h-auto max-h-[68vh] w-auto max-w-full rounded-[14px] object-contain"
+                          />
+                        </div>
+                      ) : selectedAsset.type === 'video' ? (
+                        <div className="overflow-hidden rounded-[18px] border border-black/5 bg-[#0F172A] p-3">
+                          <video
+                            controls
+                            preload="metadata"
+                            className="h-auto max-h-[68vh] w-full rounded-[14px] bg-black"
+                          >
+                            <source src={selectedAsset.preview} />
+                          </video>
+                        </div>
+                      ) : selectedAsset.type === 'pdf' ? (
+                        <div className="overflow-hidden rounded-[18px] border border-black/5 bg-white">
+                          <iframe
+                            src={selectedAsset.preview}
+                            title={selectedAsset.name}
+                            className="h-[68vh] w-full bg-white"
+                          />
+                        </div>
+                      ) : (
+                        <div className="rounded-[18px] border border-black/5 bg-white p-8">
+                          <div className="mx-auto flex max-w-2xl flex-col items-start gap-5 rounded-[20px] border border-gray-200 bg-[#F8F6F1] p-8 text-left shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm dark:bg-gray-950">
+                              <FileText className="h-7 w-7 text-gray-600 dark:text-gray-300" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gray-500 dark:text-gray-400">
+                                Native {getFileExtension(selectedAsset.type)} File
+                              </p>
+                              <h4 className="mt-2 text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                                {selectedAsset.name}
+                              </h4>
+                              <p className="mt-3 max-w-xl text-sm leading-6 text-gray-600 dark:text-gray-300">
+                                This sample stays in its original office format so the demo shows a real synced source file instead of a fabricated preview image.
+                              </p>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-3">
+                              <Button asChild>
+                                <a href={selectedAsset.preview} target="_blank" rel="noreferrer">
+                                  Open file
+                                </a>
+                              </Button>
+                              <Button asChild variant="outline">
+                                <a href={selectedAsset.preview} download>
+                                  Download sample
+                                </a>
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -792,7 +995,13 @@ export default function DemoPage() {
           <ResizableHandle withHandle />
 
           <ResizablePanel defaultSize={25} minSize={18} maxSize={40}>
-            <div className="flex h-full min-h-0 flex-col overflow-hidden">
+            <div
+              className={cn(
+                'flex h-full min-h-0 flex-col overflow-hidden transition-all',
+                (currentTourStep?.id === 'details' || currentTourStep?.id === 'comments') &&
+                  'relative z-20 ring-2 ring-blue-400 ring-inset'
+              )}
+            >
               {!selectedAsset ? (
                 <div className="flex h-full flex-col items-center justify-center text-gray-500">
                   <MessageSquare className="h-16 w-16 opacity-30" />
@@ -819,7 +1028,12 @@ export default function DemoPage() {
                   </div>
 
                   <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-                    <div className="shrink-0 border-b">
+                    <div
+                      className={cn(
+                        'shrink-0 border-b',
+                        currentTourStep?.id === 'details' && 'bg-blue-50/50 dark:bg-blue-950/10'
+                      )}
+                    >
                       <button
                         type="button"
                         onClick={() => setDetailsExpanded((current) => !current)}
@@ -921,7 +1135,12 @@ export default function DemoPage() {
                       ) : null}
                     </div>
 
-                    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                    <div
+                      className={cn(
+                        'flex min-h-0 flex-1 flex-col overflow-hidden',
+                        currentTourStep?.id === 'comments' && 'bg-blue-50/30 dark:bg-blue-950/10'
+                      )}
+                    >
                       <button
                         type="button"
                         onClick={() => setCommentsExpanded((current) => !current)}
@@ -982,6 +1201,60 @@ export default function DemoPage() {
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
+
+        {tourOpen ? <div className="pointer-events-none fixed inset-0 z-10 bg-black/20" /> : null}
+
+        {tourOpen && !tourStarted ? (
+          <div className="fixed inset-0 z-30 flex items-center justify-center p-6">
+            <div className="pointer-events-auto w-full max-w-xl rounded-[28px] border border-gray-200 bg-white p-8 shadow-[0_30px_80px_rgba(15,23,42,0.24)] dark:border-gray-800 dark:bg-gray-950">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gray-500 dark:text-gray-400">
+                Welcome
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold text-gray-900 dark:text-gray-100">
+                One workspace for files from every cloud.
+              </h2>
+              <p className="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                Asset Harbor pulls Dropbox, Google Drive, OneDrive, and iCloud files into one review queue so teams can preview, rate, and comment without asking where a file came from.
+              </p>
+              <p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                Start the tour for a quick walkthrough of the layout, or skip straight into the demo.
+              </p>
+              <div className="mt-8 flex items-center justify-between gap-3">
+                <Button type="button" variant="ghost" onClick={dismissTour}>
+                  Skip
+                </Button>
+                <Button type="button" onClick={startTour}>
+                  Start Tour
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {isTourActive && currentTourStep ? (
+          <div className="fixed inset-x-0 bottom-6 z-30 flex justify-center px-6">
+            <div className="pointer-events-auto w-full max-w-md rounded-[24px] border border-gray-200 bg-white p-5 shadow-[0_24px_64px_rgba(15,23,42,0.2)] dark:border-gray-800 dark:bg-gray-950">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gray-500 dark:text-gray-400">
+                  Step {tourStepIndex + 1} of {tourSteps.length}
+                </p>
+                <Button type="button" variant="ghost" size="sm" onClick={dismissTour}>
+                  Skip
+                </Button>
+              </div>
+              <h3 className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100">{currentTourStep.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">{currentTourStep.body}</p>
+              <div className="mt-5 flex items-center justify-between gap-3">
+                <Button type="button" variant="outline" onClick={rewindTour} disabled={tourStepIndex === 0}>
+                  Back
+                </Button>
+                <Button type="button" onClick={advanceTour}>
+                  {tourStepIndex === tourSteps.length - 1 ? 'Finish' : 'Next'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </main>
   );
