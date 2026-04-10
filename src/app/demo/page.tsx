@@ -935,8 +935,8 @@ export default function DemoPage() {
                         {commentsExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       </button>
 
-                      <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] overflow-hidden">
-                        <div className="min-h-0 overflow-y-auto">
+                      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                        <div className="min-h-0 flex-1 overflow-y-auto">
                           {commentsExpanded ? (
                             <div className="space-y-4 p-4">
                               {currentComments.length > 0 ? (
@@ -955,40 +955,43 @@ export default function DemoPage() {
                             </div>
                           )}
                         </div>
-                          <div className="shrink-0 space-y-3 border-t bg-white p-4 dark:bg-gray-950">
-                            <div className="flex flex-wrap items-center gap-1">
-                              {['😊', '😐', '😞', '👍', '🔥'].map((emoji) => (
-                                <button
-                                  key={emoji}
+                        <div className="shrink-0 border-t bg-white p-4 shadow-[0_-1px_0_rgba(15,23,42,0.06)] dark:bg-gray-950">
+                          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
+                            Add Comment
+                          </p>
+                          <div className="mb-3 flex flex-wrap items-center gap-1">
+                            {['😊', '😐', '😞', '👍', '🔥'].map((emoji) => (
+                              <button
+                                key={emoji}
                                 type="button"
                                 onClick={() => addEmojiToComposer(emoji)}
                                 className="rounded-full px-2 py-1 text-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
                               >
                                 {emoji}
                               </button>
-                              ))}
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Input
+                            ))}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Input
                               placeholder="Add a comment..."
                               value={newComment}
                               onChange={(event) => setNewComment(event.target.value)}
                               className="h-11 bg-gray-100 dark:bg-gray-800"
-                              />
-                              <Button
-                                type="button"
-                                onClick={handleCommentSubmit}
-                                disabled={isSendingComment || !newComment.trim()}
-                                size="icon"
-                              >
+                            />
+                            <Button
+                              type="button"
+                              onClick={handleCommentSubmit}
+                              disabled={isSendingComment || !newComment.trim()}
+                              size="icon"
+                            >
                               {isSendingComment ? (
                                 <LoaderCircle className="h-4 w-4 animate-spin" />
                               ) : (
                                 <SendHorizontal className="h-4 w-4" />
                               )}
-                              </Button>
-                            </div>
+                            </Button>
                           </div>
+                        </div>
                       </div>
                     </div>
                   </div>
