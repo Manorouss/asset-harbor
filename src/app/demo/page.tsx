@@ -935,8 +935,8 @@ export default function DemoPage() {
                         {commentsExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       </button>
 
-                      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-                        <div className="min-h-0 flex-1 overflow-y-auto">
+                      <div className="relative min-h-0 flex-1 overflow-hidden">
+                        <div className="h-full overflow-y-auto pb-[148px]">
                           {commentsExpanded ? (
                             <div className="space-y-4 p-4">
                               {currentComments.length > 0 ? (
@@ -955,7 +955,7 @@ export default function DemoPage() {
                             </div>
                           )}
                         </div>
-                        <div className="shrink-0 border-t bg-white p-4 shadow-[0_-1px_0_rgba(15,23,42,0.06)] dark:bg-gray-950">
+                        <div className="absolute inset-x-0 bottom-0 border-t bg-white p-4 shadow-[0_-8px_24px_rgba(15,23,42,0.06)] dark:bg-gray-950">
                           <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
                             Add Comment
                           </p>
