@@ -955,35 +955,40 @@ export default function DemoPage() {
                             </div>
                           )}
                         </div>
-                        <div className="shrink-0 space-y-3 border-t bg-white p-4 dark:bg-gray-950">
-                          <div className="flex items-center gap-1">
-                            {['😊', '😐', '😞', '👍', '🔥'].map((emoji) => (
-                              <button
-                                key={emoji}
+                          <div className="shrink-0 space-y-3 border-t bg-white p-4 dark:bg-gray-950">
+                            <div className="flex flex-wrap items-center gap-1">
+                              {['😊', '😐', '😞', '👍', '🔥'].map((emoji) => (
+                                <button
+                                  key={emoji}
                                 type="button"
                                 onClick={() => addEmojiToComposer(emoji)}
                                 className="rounded-full px-2 py-1 text-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
                               >
                                 {emoji}
                               </button>
-                            ))}
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <Textarea
-                              placeholder="Type your comment..."
+                              ))}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Input
+                              placeholder="Add a comment..."
                               value={newComment}
                               onChange={(event) => setNewComment(event.target.value)}
-                              className="min-h-[96px] resize-none bg-gray-100 dark:bg-gray-800"
-                            />
-                            <Button type="button" onClick={handleCommentSubmit} disabled={isSendingComment} size="icon">
+                              className="h-11 bg-gray-100 dark:bg-gray-800"
+                              />
+                              <Button
+                                type="button"
+                                onClick={handleCommentSubmit}
+                                disabled={isSendingComment || !newComment.trim()}
+                                size="icon"
+                              >
                               {isSendingComment ? (
                                 <LoaderCircle className="h-4 w-4 animate-spin" />
                               ) : (
                                 <SendHorizontal className="h-4 w-4" />
                               )}
-                            </Button>
+                              </Button>
+                            </div>
                           </div>
-                        </div>
                       </div>
                     </div>
                   </div>
