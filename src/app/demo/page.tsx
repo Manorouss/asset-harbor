@@ -357,10 +357,6 @@ export default function DemoPage() {
     });
   }
 
-  function addEmojiToComposer(emoji: string) {
-    setNewComment((current) => `${current}${current ? ' ' : ''}${emoji}`);
-  }
-
   function handleSelectAsset(asset: DemoAsset) {
     setSelectedAsset(asset);
     setDetailsExpanded(false);
@@ -936,7 +932,7 @@ export default function DemoPage() {
                       </button>
 
                       <div className="relative min-h-0 flex-1 overflow-hidden">
-                        <div className="h-full overflow-y-auto pb-[148px]">
+                        <div className="h-full overflow-y-auto pb-[72px]">
                           {commentsExpanded ? (
                             <div className="space-y-4 p-4">
                               {currentComments.length > 0 ? (
@@ -955,28 +951,13 @@ export default function DemoPage() {
                             </div>
                           )}
                         </div>
-                        <div className="absolute inset-x-0 bottom-0 border-t bg-white p-4 shadow-[0_-8px_24px_rgba(15,23,42,0.06)] dark:bg-gray-950">
-                          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
-                            Add Comment
-                          </p>
-                          <div className="mb-3 flex flex-wrap items-center gap-1">
-                            {['😊', '😐', '😞', '👍', '🔥'].map((emoji) => (
-                              <button
-                                key={emoji}
-                                type="button"
-                                onClick={() => addEmojiToComposer(emoji)}
-                                className="rounded-full px-2 py-1 text-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
-                              >
-                                {emoji}
-                              </button>
-                            ))}
-                          </div>
+                        <div className="absolute inset-x-0 bottom-0 border-t bg-white/95 px-3 py-3 shadow-[0_-8px_24px_rgba(15,23,42,0.06)] backdrop-blur dark:bg-gray-950/95">
                           <div className="flex items-center gap-2">
                             <Input
                               placeholder="Add a comment..."
                               value={newComment}
                               onChange={(event) => setNewComment(event.target.value)}
-                              className="h-11 bg-gray-100 dark:bg-gray-800"
+                              className="h-10 flex-1 bg-gray-100 dark:bg-gray-800"
                             />
                             <Button
                               type="button"
