@@ -6,13 +6,15 @@ import { useMemo, useState } from 'react';
 import {
   ChevronDown,
   ChevronRight,
-  Cloud,
   File,
+  Folder,
   Image as ImageIcon,
+  LoaderCircle,
   LogIn,
   MessageSquare,
   Moon,
   RefreshCw,
+  SendHorizontal,
   Sun,
   Video,
 } from 'lucide-react';
@@ -28,7 +30,8 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { demoTree, flattenDemoAssets, type DemoAsset, type DemoCloud } from '@/lib/demo-data';
+import { Textarea } from '@/components/ui/textarea';
+import { demoTree, flattenDemoAssets, type DemoAsset, type DemoCloud, type DemoComment } from '@/lib/demo-data';
 import { cn } from '@/lib/utils';
 
 type DemoFilters = {
@@ -40,11 +43,49 @@ type DemoFilters = {
   hasAnyRating: boolean;
 };
 
-const cloudToneMap: Record<DemoCloud, string> = {
-  Dropbox: 'bg-sky-500',
-  'Google Drive': 'bg-emerald-500',
-  OneDrive: 'bg-indigo-500',
-};
+const reactionEmojis = ['👍', '❤️', '😂', '😮', '👀'];
+
+function DropboxIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path d="M7.2 4 2 7.35l5.2 3.34 5.2-3.34L7.2 4Zm9.6 0-5.2 3.35 5.2 3.34L22 7.35 16.8 4ZM2 14.05l5.2 3.35 5.2-3.35-5.2-3.34L2 14.05Zm14.8-3.34-5.2 3.34 5.2 3.35 5.2-3.35-5.2-3.34ZM12.39 18.07l-5.19-3.34L2 18.08l5.2 3.34 5.19-3.35Zm0 0" fill="#0A7CFF" />
+    </svg>
+  );
+}
+
+function GoogleDriveIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path d="M8.46 3 1.8 14.52h5.18L13.64 3H8.46Z" fill="#0F9D58" />
+      <path d="m14.16 3 6.65 11.52h-5.17L8.98 3h5.18Z" fill="#FFC107" />
+      <path d="m6.98 15.02-2.62 4.53A2 2 0 0 0 6.09 22h11.82a2 2 0 0 0 1.73-1l2.62-4.53H6.98Z" fill="#4285F4" />
+    </svg>
+  );
+}
+
+function OneDriveIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path d="M9.1 10.1a5.2 5.2 0 0 1 9.58 1.84A3.88 3.88 0 0 1 18.12 20H7.53A4.53 4.53 0 0 1 7 11.02a4.8 4.8 0 0 1 2.1-.91Z" fill="#2563EB" />
+    </svg>
+  );
+}
+
+function ICloudIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path d="M7.75 18.5a3.75 3.75 0 0 1-.42-7.48 5.26 5.26 0 0 1 10.27 1.42h.15a3.06 3.06 0 1 1 0 6.12H7.75Z" fill="#9CA3AF" />
+      <path d="M7.75 17.4h10a1.97 1.97 0 1 0-.2-3.93l-.86.08-.08-.87a4.16 4.16 0 0 0-8.22-.83l-.2.8-.82.07a2.65 2.65 0 0 0 .18 5.29Z" fill="#E5E7EB" />
+    </svg>
+  );
+}
+
+function CloudIcon({ source, className = 'h-4 w-4' }: { source: DemoCloud; className?: string }) {
+  if (source === 'Dropbox') return <DropboxIcon className={className} />;
+  if (source === 'Google Drive') return <GoogleDriveIcon className={className} />;
+  if (source === 'OneDrive') return <OneDriveIcon className={className} />;
+  return <ICloudIcon className={className} />;
+}
 
 function AssetTypeIcon({ type }: { type: DemoAsset['type'] }) {
   if (type === 'image') {
@@ -61,7 +102,7 @@ function AssetTypeIcon({ type }: { type: DemoAsset['type'] }) {
 function CloudPill({ source }: { source: DemoCloud }) {
   return (
     <span className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[10px] font-medium text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
-      <span className={cn('h-1.5 w-1.5 rounded-full', cloudToneMap[source])} />
+      <CloudIcon source={source} className="h-3 w-3" />
       {source}
     </span>
   );
@@ -85,7 +126,11 @@ function DemoTreeItem({
           <div className="w-6 text-gray-500">
             <ChevronDown className="h-4 w-4" />
           </div>
-          <Cloud className="mr-2 h-4 w-4 text-gray-400" />
+          {node.source ? (
+            <CloudIcon source={node.source} className="mr-2 h-4 w-4" />
+          ) : (
+            <Folder className="mr-2 h-4 w-4 text-[#4F8EF7]" />
+          )}
           <span>{node.name}</span>
         </div>
         <div className="ml-3 border-l border-gray-200 pl-5 dark:border-gray-700">
@@ -128,6 +173,11 @@ export default function DemoPage() {
   const [selectedAsset, setSelectedAsset] = useState<DemoAsset | null>(
     allAssets.find((asset) => asset.type === 'video') ?? allAssets[0] ?? null
   );
+  const [commentsByAsset, setCommentsByAsset] = useState<Record<string, DemoComment[]>>(() =>
+    Object.fromEntries(allAssets.map((asset) => [asset.id, asset.comments ?? []]))
+  );
+  const [newComment, setNewComment] = useState('');
+  const [isSendingComment, setIsSendingComment] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [userFilter, setUserFilter] = useState('');
   const [filters, setFilters] = useState<DemoFilters>({
@@ -142,21 +192,22 @@ export default function DemoPage() {
   const userOptions = useMemo(() => {
     const usernames = new Set<string>();
     allAssets.forEach((asset) => {
-      (asset.comments ?? []).forEach((comment) => usernames.add(comment.author));
+      (commentsByAsset[asset.id] ?? []).forEach((comment) => usernames.add(comment.author));
     });
     return [...usernames].sort();
-  }, [allAssets]);
+  }, [allAssets, commentsByAsset]);
 
   const filteredList = useMemo(() => {
     return allAssets.filter((asset) => {
+      const assetComments = commentsByAsset[asset.id] ?? [];
       const matchesName = asset.name.toLowerCase().includes(filters.name.toLowerCase());
       const matchesType = filters.type === 'all' || asset.type === filters.type;
       const matchesSource = filters.source === 'all' || asset.source === filters.source;
       const hasAnyRating =
         !!asset.reviews && asset.reviews.positive + asset.reviews.neutral + asset.reviews.negative > 0;
       const hasNegativeRating = !!asset.reviews && asset.reviews.negative > 0;
-      const hasComments = (asset.comments?.length ?? 0) > 0;
-      const matchesUser = !userFilter || (asset.comments ?? []).some((comment) => comment.author === userFilter);
+      const hasComments = assetComments.length > 0;
+      const matchesUser = !userFilter || assetComments.some((comment) => comment.author === userFilter);
 
       if (!matchesName || !matchesType || !matchesSource || !matchesUser) {
         return false;
@@ -176,7 +227,7 @@ export default function DemoPage() {
 
       return true;
     });
-  }, [allAssets, filters, userFilter]);
+  }, [allAssets, commentsByAsset, filters, userFilter]);
 
   const showFilteredList =
     !!filters.name ||
@@ -189,6 +240,7 @@ export default function DemoPage() {
 
   const ratings = selectedAsset?.reviews ?? { positive: 0, neutral: 0, negative: 0 };
   const totalRatings = ratings.positive + ratings.neutral + ratings.negative;
+  const currentComments = selectedAsset ? commentsByAsset[selectedAsset.id] ?? [] : [];
 
   const previewIcon =
     selectedAsset?.type === 'image' ? (
@@ -198,6 +250,84 @@ export default function DemoPage() {
     ) : (
       <File className="h-16 w-16 text-gray-300" />
     );
+
+  function addEmojiToComposer(emoji: string) {
+    setNewComment((current) => `${current}${current ? ' ' : ''}${emoji}`);
+  }
+
+  async function handleCommentSubmit() {
+    if (!selectedAsset || !newComment.trim() || isSendingComment) {
+      return;
+    }
+
+    setIsSendingComment(true);
+    await new Promise((resolve) => setTimeout(resolve, 220));
+
+    const nextComment: DemoComment = {
+      id: Date.now(),
+      author: 'Demo Visitor',
+      content: newComment.trim(),
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      reactions: [],
+    };
+
+    setCommentsByAsset((current) => ({
+      ...current,
+      [selectedAsset.id]: [...(current[selectedAsset.id] ?? []), nextComment],
+    }));
+    setNewComment('');
+    setIsSendingComment(false);
+  }
+
+  function handleReaction(commentId: number, emoji: string) {
+    if (!selectedAsset) {
+      return;
+    }
+
+    setCommentsByAsset((current) => {
+      const updated = (current[selectedAsset.id] ?? []).map((comment) => {
+        if (comment.id !== commentId) {
+          return comment;
+        }
+
+        const existing = comment.reactions ?? [];
+        const reactionIndex = existing.findIndex((reaction) => reaction.emoji === emoji);
+
+        if (reactionIndex === -1) {
+          return {
+            ...comment,
+            reactions: [...existing, { emoji, users: ['Demo Visitor'] }],
+          };
+        }
+
+        const nextReactions = [...existing];
+        const target = nextReactions[reactionIndex];
+        const hasUser = target.users.includes('Demo Visitor');
+
+        if (hasUser) {
+          const nextUsers = target.users.filter((user) => user !== 'Demo Visitor');
+
+          if (nextUsers.length === 0) {
+            nextReactions.splice(reactionIndex, 1);
+          } else {
+            nextReactions[reactionIndex] = { ...target, users: nextUsers };
+          }
+        } else {
+          nextReactions[reactionIndex] = { ...target, users: [...target.users, 'Demo Visitor'] };
+        }
+
+        return {
+          ...comment,
+          reactions: nextReactions,
+        };
+      });
+
+      return {
+        ...current,
+        [selectedAsset.id]: updated,
+      };
+    });
+  }
 
   return (
     <main className={darkMode ? 'dark' : ''}>
@@ -215,7 +345,7 @@ export default function DemoPage() {
             {darkMode ? <Sun className="h-5 w-5 text-yellow-400" /> : <Moon className="h-5 w-5 text-gray-700" />}
           </button>
           <div className="ml-auto flex items-center gap-4">
-            <span className="text-sm text-gray-500 dark:text-gray-400">3 clouds connected</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">4 clouds connected</span>
             <span className="text-sm text-gray-500 dark:text-gray-400">Welcome, Demo Visitor</span>
             <Button asChild variant="ghost" size="icon">
               <Link href="/login">
@@ -264,6 +394,7 @@ export default function DemoPage() {
                 <SelectItem value="Dropbox">Dropbox</SelectItem>
                 <SelectItem value="Google Drive">Google Drive</SelectItem>
                 <SelectItem value="OneDrive">OneDrive</SelectItem>
+                <SelectItem value="iCloud Drive">iCloud Drive</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -456,13 +587,11 @@ export default function DemoPage() {
                   </div>
 
                   <div className="min-h-0 flex-1">
-                    <h3 className="shrink-0 border-b p-4 font-semibold">
-                      Comments ({selectedAsset.comments?.length ?? 0})
-                    </h3>
-                    <ScrollArea className="h-[calc(100%-3.5rem)]">
+                    <h3 className="shrink-0 border-b p-4 font-semibold">Comments ({currentComments.length})</h3>
+                    <ScrollArea className="h-[calc(100%-11rem)]">
                       <div className="space-y-4 p-4">
-                        {(selectedAsset.comments ?? []).map((comment) => (
-                          <div key={comment.id} className="flex items-start gap-3">
+                        {currentComments.map((comment) => (
+                          <div key={comment.id} className="group flex items-start gap-3">
                             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold dark:bg-gray-700">
                               {comment.author.charAt(0).toUpperCase()}
                             </div>
@@ -479,11 +608,67 @@ export default function DemoPage() {
                               <div className="mt-1 text-sm text-gray-700 dark:text-gray-200">
                                 {comment.content}
                               </div>
+                              {comment.reactions?.length ? (
+                                <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                                  {comment.reactions.map((reaction) => (
+                                    <button
+                                      key={`${comment.id}-${reaction.emoji}`}
+                                      type="button"
+                                      onClick={() => handleReaction(comment.id, reaction.emoji)}
+                                      className="flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1 text-xs transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                                    >
+                                      <span>{reaction.emoji}</span>
+                                      <span>{reaction.users.length}</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              ) : null}
+                              <div className="mt-2 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                                {reactionEmojis.map((emoji) => (
+                                  <button
+                                    key={`${comment.id}-${emoji}-action`}
+                                    type="button"
+                                    onClick={() => handleReaction(comment.id, emoji)}
+                                    className="rounded-full px-1.5 py-1 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                                  >
+                                    {emoji}
+                                  </button>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         ))}
                       </div>
                     </ScrollArea>
+                    <div className="shrink-0 space-y-3 border-t bg-white p-4 dark:bg-gray-950">
+                      <div className="flex items-center gap-1">
+                        {['😊', '😐', '😞', '👍', '🔥'].map((emoji) => (
+                          <button
+                            key={emoji}
+                            type="button"
+                            onClick={() => addEmojiToComposer(emoji)}
+                            className="rounded-full px-2 py-1 text-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                          >
+                            {emoji}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Textarea
+                          placeholder="Type your comment..."
+                          value={newComment}
+                          onChange={(event) => setNewComment(event.target.value)}
+                          className="min-h-[76px] resize-none bg-gray-100 dark:bg-gray-800"
+                        />
+                        <Button type="button" onClick={handleCommentSubmit} disabled={isSendingComment} size="icon">
+                          {isSendingComment ? (
+                            <LoaderCircle className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <SendHorizontal className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </>
               )}

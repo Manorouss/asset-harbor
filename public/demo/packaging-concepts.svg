@@ -1,21 +1,38 @@
 <svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="900" rx="48" fill="#F2E7DA"/>
-  <rect x="64" y="64" width="1072" height="772" rx="36" fill="#FFFDF9"/>
-  <rect x="116" y="116" width="968" height="96" rx="24" fill="#173540"/>
-  <text x="156" y="172" fill="#FFF7ED" font-family="Arial, sans-serif" font-size="28" font-weight="700">Packaging concepts v3</text>
-  <text x="820" y="172" fill="#FFD9B5" font-family="Arial, sans-serif" font-size="18">Shelf refresh / in review</text>
-  <rect x="116" y="260" width="280" height="472" rx="28" fill="#E2C0A4"/>
-  <rect x="460" y="260" width="280" height="472" rx="28" fill="#EAD8C5"/>
-  <rect x="804" y="260" width="280" height="472" rx="28" fill="#D77545"/>
-  <rect x="156" y="320" width="200" height="168" rx="18" fill="#FFF8F0"/>
-  <rect x="500" y="320" width="200" height="168" rx="18" fill="#FFF8F0"/>
-  <rect x="844" y="320" width="200" height="168" rx="18" fill="#FFF8F0"/>
-  <text x="170" y="560" fill="#1F2937" font-family="Arial, sans-serif" font-size="34" font-weight="700">Calm</text>
-  <text x="514" y="560" fill="#1F2937" font-family="Arial, sans-serif" font-size="34" font-weight="700">Retail</text>
-  <text x="858" y="560" fill="#FFF8F0" font-family="Arial, sans-serif" font-size="34" font-weight="700">Bold</text>
-  <text x="168" y="606" fill="#374151" font-family="Arial, sans-serif" font-size="20">Muted shelf presence</text>
-  <text x="512" y="606" fill="#374151" font-family="Arial, sans-serif" font-size="20">Balanced for mass market</text>
-  <text x="856" y="606" fill="#FFF8F0" font-family="Arial, sans-serif" font-size="20">High contrast hero pack</text>
-  <rect x="116" y="760" width="968" height="24" rx="12" fill="#EFE6DC"/>
-  <rect x="116" y="760" width="582" height="24" rx="12" fill="#173540"/>
+  <rect width="1200" height="900" rx="40" fill="#EFEAE2"/>
+  <rect x="58" y="48" width="1084" height="804" rx="28" fill="#FBFAF7"/>
+  <rect x="58" y="48" width="1084" height="56" rx="28" fill="#E7E0D6"/>
+  <circle cx="100" cy="76" r="8" fill="#FF5F57"/>
+  <circle cx="128" cy="76" r="8" fill="#FEBC2E"/>
+  <circle cx="156" cy="76" r="8" fill="#28C840"/>
+  <text x="468" y="82" fill="#334155" font-family="Arial, sans-serif" font-size="18" font-weight="700">Packaging concept board v3.png</text>
+  <rect x="102" y="136" width="996" height="76" rx="20" fill="#163247"/>
+  <text x="136" y="183" fill="#FFF7ED" font-family="Arial, sans-serif" font-size="28" font-weight="700">Shelf concept review</text>
+  <text x="832" y="183" fill="#FED7AA" font-family="Arial, sans-serif" font-size="18">Linked to OneDrive retail specs</text>
+  <rect x="102" y="244" width="288" height="532" rx="24" fill="#D4B08B"/>
+  <rect x="112" y="254" width="268" height="512" rx="20" fill="#F7F1E8"/>
+  <rect x="146" y="290" width="200" height="280" rx="18" fill="#E1C3A7"/>
+  <rect x="190" y="326" width="112" height="128" rx="12" fill="#FFF7ED"/>
+  <rect x="176" y="604" width="140" height="18" rx="9" fill="#8A5A44"/>
+  <rect x="160" y="636" width="172" height="14" rx="7" fill="#C7A17F"/>
+  <rect x="172" y="664" width="148" height="14" rx="7" fill="#C7A17F"/>
+  <text x="168" y="720" fill="#5B4033" font-family="Arial, sans-serif" font-size="22" font-weight="700">Calm retail</text>
+  <rect x="456" y="244" width="288" height="532" rx="24" fill="#E5D4C2"/>
+  <rect x="466" y="254" width="268" height="512" rx="20" fill="#F7F1E8"/>
+  <rect x="500" y="290" width="200" height="280" rx="18" fill="#DAB997"/>
+  <rect x="544" y="326" width="112" height="128" rx="12" fill="#FFF7ED"/>
+  <rect x="530" y="604" width="140" height="18" rx="9" fill="#8A5A44"/>
+  <rect x="514" y="636" width="172" height="14" rx="7" fill="#C7A17F"/>
+  <rect x="526" y="664" width="148" height="14" rx="7" fill="#C7A17F"/>
+  <text x="522" y="720" fill="#5B4033" font-family="Arial, sans-serif" font-size="22" font-weight="700">Mass shelf</text>
+  <rect x="810" y="244" width="288" height="532" rx="24" fill="#D56B3A"/>
+  <rect x="820" y="254" width="268" height="512" rx="20" fill="#F3D5BF"/>
+  <rect x="854" y="290" width="200" height="280" rx="18" fill="#CC5A2A"/>
+  <rect x="898" y="326" width="112" height="128" rx="12" fill="#FFF7ED"/>
+  <rect x="884" y="604" width="140" height="18" rx="9" fill="#7B341E"/>
+  <rect x="868" y="636" width="172" height="14" rx="7" fill="#FB923C"/>
+  <rect x="880" y="664" width="148" height="14" rx="7" fill="#FB923C"/>
+  <text x="876" y="720" fill="#7B341E" font-family="Arial, sans-serif" font-size="22" font-weight="700">High contrast</text>
+  <rect x="102" y="796" width="996" height="18" rx="9" fill="#E2D8CB"/>
+  <rect x="102" y="796" width="628" height="18" rx="9" fill="#163247"/>
 </svg>
