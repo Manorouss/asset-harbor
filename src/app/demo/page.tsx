@@ -266,7 +266,7 @@ export default function DemoPage() {
   const [darkMode, setDarkMode] = useState(false);
   const [replyingToId, setReplyingToId] = useState<number | null>(null);
   const [replyDrafts, setReplyDrafts] = useState<Record<number, string>>({});
-  const [detailsExpanded, setDetailsExpanded] = useState(true);
+  const [detailsExpanded, setDetailsExpanded] = useState(false);
   const [commentsExpanded, setCommentsExpanded] = useState(true);
   const [userFilter, setUserFilter] = useState('');
   const [filters, setFilters] = useState<DemoFilters>({
@@ -359,6 +359,14 @@ export default function DemoPage() {
 
   function addEmojiToComposer(emoji: string) {
     setNewComment((current) => `${current}${current ? ' ' : ''}${emoji}`);
+  }
+
+  function handleSelectAsset(asset: DemoAsset) {
+    setSelectedAsset(asset);
+    setDetailsExpanded(false);
+    setCommentsExpanded(true);
+    setReplyingToId(null);
+    setNewComment('');
   }
 
   function handleAssetRating(nextRating: DemoRatingKey) {
@@ -701,7 +709,7 @@ export default function DemoPage() {
                             ? 'bg-blue-100 dark:bg-blue-900/50'
                             : 'hover:bg-gray-100 dark:hover:bg-gray-800'
                         )}
-                        onClick={() => setSelectedAsset(asset)}
+                        onClick={() => handleSelectAsset(asset)}
                       >
                         <AssetTypeIcon type={asset.type} />
                         <span className="truncate">{asset.name}</span>
@@ -717,7 +725,7 @@ export default function DemoPage() {
                       key={node.id}
                       node={node}
                       selectedAsset={selectedAsset}
-                      onSelectAsset={setSelectedAsset}
+                      onSelectAsset={handleSelectAsset}
                       expandedIds={expandedFolderIds}
                       onToggleFolder={toggleFolder}
                     />
@@ -825,8 +833,8 @@ export default function DemoPage() {
                         {detailsExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       </button>
                       {detailsExpanded ? (
-                        <div className="border-t bg-gray-50/60 px-4 py-4 dark:bg-gray-950/60">
-                          <div className="space-y-4">
+                        <ScrollArea className="max-h-[34vh] border-t">
+                          <div className="space-y-4 bg-gray-50/60 px-4 py-4 dark:bg-gray-950/60">
                             <div className="rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-950">
                               <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
                                 Your Review
@@ -913,7 +921,7 @@ export default function DemoPage() {
                               </div>
                             ) : null}
                           </div>
-                        </div>
+                        </ScrollArea>
                       ) : null}
                     </div>
 
